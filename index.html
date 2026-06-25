@@ -1,0 +1,3440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Muscle Quest</title>
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --panel: #fffaf1;
+      --panel-2: #ffffff;
+      --ink: #24211d;
+      --muted: #766d62;
+      --line: #e6dccd;
+      --accent: #ff8a3d;
+      --accent-2: #ffe4cf;
+      --green: #4f8f63;
+      --green-2: #e4f4e9;
+      --red: #b45757;
+      --red-2: #fff0ee;
+      --shadow: 0 10px 30px rgba(56, 38, 18, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, #fff2d7 0, transparent 33%),
+        linear-gradient(180deg, #f9f4ea 0%, var(--bg) 100%);
+      line-height: 1.55;
+    }
+
+    .app {
+      width: min(1080px, 100%);
+      margin: 0 auto;
+      padding: 18px 14px 56px;
+    }
+
+    header { padding: 18px 4px 10px; }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 25px;
+      box-shadow: var(--shadow);
+      font-weight: 900;
+      letter-spacing: -0.06em;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 7vw, 44px);
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .subtitle {
+      margin: 8px 0 0 60px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .hero {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255, 250, 241, 0.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .panel.white { background: rgba(255, 255, 255, 0.92); }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      letter-spacing: -0.03em;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    p { margin: 0 0 10px; }
+
+    .micro {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    select,
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 14px;
+      padding: 11px 12px;
+      font: inherit;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 84px;
+      resize: vertical;
+    }
+
+    select:focus,
+    input:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255, 138, 61, 0.16);
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 16px;
+      background: var(--ink);
+      color: #fff;
+      padding: 12px 14px;
+      font: inherit;
+      font-weight: 750;
+      cursor: pointer;
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); opacity: 0.88; }
+
+    .btn.primary {
+      background: var(--accent);
+      color: #1f150d;
+      font-size: 17px;
+      padding: 14px;
+    }
+
+    .btn.ghost {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .btn.small {
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .btn.danger {
+      background: var(--red-2);
+      color: var(--red);
+      border: 1px solid #f0c6c1;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .result {
+      margin-top: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .combo-card,
+    .exercise-card,
+    .log-row,
+    .coverage-card {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .combo-card.main {
+      border-color: rgba(255, 138, 61, 0.5);
+      background: linear-gradient(180deg, #fff7ed, #fff);
+    }
+
+    .combo-card.minimum {
+      border-color: rgba(79, 143, 99, 0.35);
+      background: linear-gradient(180deg, #f1fbf4, #fff);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f3eee6;
+      color: #5b5248;
+      border: 1px solid #ebe1d4;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 12px;
+      line-height: 1.1;
+    }
+
+    .tag.good {
+      background: var(--green-2);
+      border-color: #c9e6d1;
+      color: #336941;
+    }
+
+    .tag.hot {
+      background: var(--accent-2);
+      border-color: #ffd0ad;
+      color: #8c430e;
+    }
+
+    .tag.warn {
+      background: var(--red-2);
+      border-color: #f0c6c1;
+      color: var(--red);
+    }
+
+    .actions-list {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    .actions-list li { margin: 5px 0; }
+
+    .safety-note {
+      background: #fff9ed;
+      border-color: #ffe2b8;
+      color: #6a4a20;
+    }
+
+    .action-stack {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .action-item {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fffdf9;
+      padding: 12px;
+      overflow: hidden;
+    }
+
+    .action-item-top {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .action-title-line {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .action-title-line h4 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    .action-detail-panel {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line);
+      display: grid;
+      gap: 12px;
+    }
+
+    .action-detail-panel[hidden] {
+      display: none;
+    }
+
+    .demo-media {
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #f7f2ea;
+      overflow: hidden;
+    }
+
+    .demo-media video,
+    .demo-media img {
+      display: block;
+      width: 100%;
+      max-height: 320px;
+      object-fit: contain;
+      background: #eee8df;
+    }
+
+    .media-placeholder,
+    .media-fallback {
+      padding: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      background: #f7f2ea;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .detail-block {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+      background: #fff;
+      min-width: 0;
+    }
+
+    .detail-block h5 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .detail-block ul,
+    .detail-block ol {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .detail-block li {
+      margin: 3px 0;
+    }
+
+    .detail-block.wide {
+      grid-column: 1 / -1;
+    }
+
+    .quote,
+    .notice {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #fff4e5;
+      border: 1px solid #ffe0bd;
+      color: #6c421c;
+      font-size: 14px;
+    }
+
+    .notice.danger {
+      background: var(--red-2);
+      border-color: #f0c6c1;
+      color: #7c3535;
+    }
+
+    .notice.good {
+      background: var(--green-2);
+      border-color: #c9e6d1;
+      color: #336941;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .coverage-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .coverage-card {
+      min-height: 78px;
+      display: grid;
+      align-content: center;
+      gap: 5px;
+    }
+
+    .coverage-card.done {
+      border-color: #bfe2c8;
+      background: var(--green-2);
+    }
+
+    .coverage-card .mark {
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .section { margin-top: 16px; }
+
+    details {
+      margin-top: 16px;
+      background: rgba(255,255,255,0.76);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 16px 18px;
+      font-weight: 800;
+      font-size: 18px;
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    .details-body { padding: 0 18px 18px; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .form-grid .wide { grid-column: 1 / -1; }
+
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      padding: 10px;
+      background: #fbf8f2;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      max-height: 260px;
+      overflow: auto;
+    }
+
+    .check-grid label,
+    .inline-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    .check-grid input,
+    .inline-check input { width: auto; }
+
+    .list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .muted-box {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #f4efe7;
+      color: var(--muted);
+      border: 1px dashed #ddd0c0;
+    }
+
+    .sticky-record {
+      position: sticky;
+      top: 12px;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 820px) {
+      .hero,
+      .two,
+      .three,
+      .form-grid,
+      .button-row {
+        grid-template-columns: 1fr;
+      }
+
+      .subtitle { margin-left: 0; }
+
+      .controls,
+      .coverage-grid,
+      .check-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .detail-grid,
+      .action-item-top {
+        grid-template-columns: 1fr;
+      }
+
+      .action-item-top .btn {
+        width: 100%;
+      }
+
+      .sticky-record { position: static; }
+    }
+
+    @media (max-width: 420px) {
+      .app { padding-inline: 10px; }
+      .panel { padding: 15px; }
+      .controls,
+      .coverage-grid,
+      .check-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">MQ</div>
+        <div>
+          <h1>Muscle Quest</h1>
+          <div class="micro">把“该做但无聊”的力量训练，改造成一张今天能完成的小任务卡。</div>
+        </div>
+      </div>
+      <p class="subtitle">目标不是成为健身达人，而是把低摩擦、有选择、有反馈的小任务做起来。</p>
+    </header>
+
+    <section class="hero">
+      <div class="panel">
+        <h2>今天练什么？</h2>
+        <p class="micro">早上不用想太多：选时间、精力、额外器械和今天不想重点练的部位，然后只给你一个主方案。</p>
+
+        <div class="controls">
+          <label>
+            今天可用时间
+            <select id="todayTime">
+              <option value="5">5 分钟</option>
+              <option value="12" selected>12 分钟</option>
+              <option value="20">20 分钟</option>
+              <option value="30">30 分钟</option>
+            </select>
+          </label>
+          <label>
+            今天精力
+            <select id="todayEnergy">
+              <option value="低">低</option>
+              <option value="普通" selected>普通</option>
+              <option value="高">高</option>
+            </select>
+          </label>
+          <label>
+            今天可用的额外器械
+            <select id="todayEquipment">
+              <option value="无" selected>无</option>
+              <option value="椅子">椅子</option>
+              <option value="台阶">台阶</option>
+              <option value="弹力带">弹力带</option>
+              <option value="背包">背包</option>
+              <option value="哑铃">哑铃</option>
+            </select>
+          </label>
+          <label>
+            今天不想重点练的部位
+            <select id="avoidPart">
+              <option value="无" selected>无</option>
+              <option value="腿">腿</option>
+              <option value="手臂">手臂</option>
+              <option value="肩">肩</option>
+              <option value="核心">核心</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="button-row">
+          <button class="btn primary" id="pickBtn" type="button">帮我选一个</button>
+          <button class="btn ghost" id="nextBtn" type="button">换一张</button>
+        </div>
+        <div id="recommendation" class="result">
+          <div class="muted-box">点击按钮后，这里会出现一个主方案和一个最低可交付备选方案。</div>
+        </div>
+
+        <div class="notice safety-note">
+          动作演示和文字仅用于一般训练参考。出现疼痛、眩晕或明显不适时立即停止；如有伤病或特殊健康情况，请先咨询合适的专业人员。
+        </div>
+
+        <div class="quote">
+          这不是复杂健身计划。它只是今天早上你愿意开始的一张任务卡。
+        </div>
+      </div>
+
+      <aside class="panel white sticky-record">
+        <h2>训练记录</h2>
+        <div id="recordBox">
+          <div class="muted-box">先生成今日推荐，再记录训练状态、实际时长、趣味度和一句反馈。</div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="grid two section">
+      <div class="panel white">
+        <h2>每周覆盖图</h2>
+        <p class="micro">只统计“力量训练已完成”的记录。重点不是制造压力，而是提醒：这周是不是总在练同一种动作？</p>
+        <div id="coverage" class="coverage-grid"></div>
+        <p id="coverageNote" class="micro" style="margin-top:12px;"></p>
+      </div>
+
+      <div class="panel white">
+        <h2>最近 7 天</h2>
+        <div id="recentLogs" class="list"></div>
+      </div>
+    </section>
+
+    <details>
+      <summary>组合卡管理</summary>
+      <div class="details-body">
+        <p class="micro">内置多张固定组合卡。每张卡都预先编排动作和顺序；你也可以新增、编辑、删除，让推荐更像你自己的早晨。</p>
+        <form id="comboForm">
+          <input type="hidden" id="comboId" />
+          <div class="form-grid">
+            <label>组合名称<input id="comboName" required placeholder="例如：安静 12 分钟全身卡" /></label>
+            <label>推荐时长<input id="comboMinutes" type="number" min="3" max="60" value="12" required /></label>
+            <label>难度 1-5<input id="comboDifficulty" type="number" min="1" max="5" value="2" required /></label>
+            <label>趣味度 1-5<input id="comboFun" type="number" min="1" max="5" value="3" required /></label>
+            <label class="wide">适合场景<input id="comboScenario" required placeholder="例如：睡醒但不想吵、只想做一点点" /></label>
+            <label class="wide">轮数或计时方式<input id="comboScheme" required placeholder="例如：40 秒做 / 20 秒换，循环 2 轮" /></label>
+            <label class="wide">训练重点<input id="comboFocus" required placeholder="例如：全身唤醒、腿臀核心、上背姿态" /></label>
+            <label class="wide">完成标准<input id="comboCompletion" required placeholder="例如：做完 1 轮也算完成" /></label>
+            <div class="wide">
+              <div class="micro" style="margin-bottom:6px;">动作列表</div>
+              <div id="comboActionChecks" class="check-grid"></div>
+            </div>
+          </div>
+          <div class="item-actions">
+            <button class="btn" type="submit">保存组合卡</button>
+            <button class="btn ghost" type="button" id="resetComboForm">清空表单</button>
+          </div>
+        </form>
+        <div id="comboList" class="list"></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>动作卡池管理</summary>
+      <div class="details-body">
+        <p class="micro">内置约三十余张动作卡。动作“主要部位”只表示主要训练部位，用户自定义动作仍按这里填写。</p>
+        <form id="actionForm">
+          <input type="hidden" id="actionId" />
+          <div class="form-grid">
+            <label>动作名称<input id="actionName" required placeholder="例如：椅子深蹲" /></label>
+            <label>动作模式
+              <select id="actionPattern" required>
+                <option>蹲</option>
+                <option>髋铰链</option>
+                <option>推</option>
+                <option>拉</option>
+                <option>核心</option>
+                <option>搬运</option>
+                <option>移动</option>
+              </select>
+            </label>
+            <label>主要部位<input id="actionParts" required placeholder="用逗号分隔，例如：腿,臀" /></label>
+            <label>所需器械
+              <select id="actionEquipment" required>
+                <option>无</option>
+                <option>椅子</option>
+                <option>台阶</option>
+                <option>弹力带</option>
+                <option>背包</option>
+                <option>哑铃</option>
+              </select>
+            </label>
+            <label>难度 1-5<input id="actionDifficulty" type="number" min="1" max="5" value="2" required /></label>
+            <label>趣味度 1-5<input id="actionFun" type="number" min="1" max="5" value="3" required /></label>
+            <label>噪音
+              <select id="actionNoise">
+                <option>低</option>
+                <option>中</option>
+                <option>高</option>
+              </select>
+            </label>
+            <label>空间要求
+              <select id="actionSpace">
+                <option>小</option>
+                <option>中</option>
+                <option>大</option>
+              </select>
+            </label>
+            <label class="wide">建议次数或时间<input id="actionPrescription" required placeholder="例如：8-12 次 / 30 秒" /></label>
+            <label class="wide">降级版本<input id="actionRegress" required placeholder="更简单的做法" /></label>
+            <label class="wide">进阶版本<input id="actionProgress" required placeholder="更难一点的做法" /></label>
+            <label class="wide">注意事项<textarea id="actionNotes" required placeholder="动作提醒、避免疼痛、节奏等"></textarea></label>
+            <label class="wide">操作步骤（每行一条）<textarea id="actionSteps" placeholder="例如：\n双脚与髋同宽站稳\n臀部向后坐，下蹲到可控深度\n脚跟踩地站起"></textarea></label>
+            <label class="wide">发力感受<input id="actionFeel" placeholder="例如：主要感觉腿前侧和臀部发力" /></label>
+            <label class="wide">常见错误（每行一条）<textarea id="actionMistakes" placeholder="例如：膝盖向内扣\n下蹲时脚跟抬起"></textarea></label>
+            <label class="wide">停止条件<input id="actionStopIf" placeholder="例如：膝、腰或肩出现疼痛时停止并改用降级版本" /></label>
+            <label class="inline-check wide">
+              <input type="checkbox" id="actionAdvanced" />
+              是否进阶动作
+            </label>
+            <label>媒体类型
+              <select id="actionDemoType">
+                <option value="">无</option>
+                <option value="video">视频</option>
+                <option value="image">图片 / GIF</option>
+              </select>
+            </label>
+            <label>媒体地址<input id="actionDemoSrc" placeholder="例如：assets/a_body_squat.webm 或完整 URL" /></label>
+            <label>视频封面地址<input id="actionDemoPoster" placeholder="可选，例如：assets/a_body_squat.jpg" /></label>
+            <label>来源说明<input id="actionDemoCredit" placeholder="可选，记录来源或制作者" /></label>
+          </div>
+          <div class="item-actions">
+            <button class="btn" type="submit">保存动作卡</button>
+            <button class="btn ghost" type="button" id="resetActionForm">清空表单</button>
+          </div>
+        </form>
+        <div id="actionList" class="list"></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>数据</summary>
+      <div class="details-body">
+        <p class="micro">所有数据都保存在当前浏览器的 localStorage。升级会自动合并新增内置动作和组合，不要求清空旧数据；“恢复默认数据”才会主动清空。</p>
+        <div id="migrationNotice"></div>
+        <div class="item-actions">
+          <button class="btn ghost" id="exportData" type="button">导出 JSON</button>
+          <button class="btn danger" id="resetAll" type="button">恢复默认数据</button>
+        </div>
+        <textarea id="dataDump" readonly placeholder="导出的 JSON 会显示在这里"></textarea>
+      </div>
+    </details>
+
+    <div class="footer-note">Muscle Quest · 低摩擦力量训练小工具 · 单文件本地版</div>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "muscleQuest.v1";
+    const DATA_VERSION = 3;
+    const NO_MATCH_MESSAGE = "当前条件下没有完全匹配的任务卡，请更换器械或放宽一个条件。";
+
+    const STATUS = {
+      STRENGTH_DONE: "strength_completed",
+      WALK: "walk",
+      REST: "rest",
+      SKIPPED: "planned_skipped"
+    };
+
+    const STATUS_LABELS = {
+      [STATUS.STRENGTH_DONE]: "力量训练已完成",
+      [STATUS.WALK]: "今天快走",
+      [STATUS.REST]: "今天休息",
+      [STATUS.SKIPPED]: "原计划力量训练但跳过"
+    };
+
+    const TIME_RANGES = {
+      5: { min: 3, max: 7 },
+      12: { min: 9, max: 15 },
+      20: { min: 16, max: 24 },
+      30: { min: 25, max: 35 }
+    };
+
+    const DEFAULT_ACTIONS = [
+      {
+        id: "a_body_squat",
+        name: "徒手深蹲",
+        pattern: "蹲",
+        parts: ["腿", "臀"],
+        equipment: "无",
+        difficulty: 2,
+        fun: 3,
+        noise: "低",
+        space: "小",
+        prescription: "8-12 次",
+        regress: "减少下蹲深度，或轻扶桌沿",
+        progress: "底部停 2 秒",
+        notes: "脚跟稳，膝盖大致朝脚尖方向，保持能顺畅呼吸。"
+      },
+      {
+        id: "a_chair_squat",
+        name: "椅子起坐",
+        pattern: "蹲",
+        parts: ["腿", "臀"],
+        equipment: "椅子",
+        difficulty: 1,
+        fun: 2,
+        noise: "低",
+        space: "小",
+        prescription: "8-10 次",
+        regress: "用手轻扶桌沿",
+        progress: "下坐更慢，站起更快",
+        notes: "椅子要稳，轻触椅面即可，不要完全塌坐。"
+      },
+      {
+        id: "a_reverse_lunge",
+        name: "后撤弓步",
+        pattern: "蹲",
+        parts: ["腿", "臀"],
+        equipment: "无",
+        difficulty: 3,
+        fun: 3,
+        noise: "低",
+        space: "中",
+        prescription: "每侧 6-8 次",
+        regress: "小幅度后撤，手扶墙",
+        progress: "底部停顿 1 秒",
+        notes: "先向后找地，再下蹲；前脚掌和脚跟都要稳。"
+      },
+      {
+        id: "a_step_up",
+        name: "台阶上步",
+        pattern: "蹲",
+        parts: ["腿", "臀"],
+        equipment: "台阶",
+        difficulty: 3,
+        fun: 4,
+        noise: "中",
+        space: "中",
+        prescription: "每侧 8 次",
+        regress: "降低台阶高度",
+        progress: "抱背包或哑铃",
+        notes: "用上方那条腿发力站起，不要靠下方脚蹬地弹起。"
+      },
+      {
+        id: "a_calf_raise",
+        name: "提踵",
+        pattern: "移动",
+        parts: ["小腿", "脚踝"],
+        equipment: "无",
+        difficulty: 1,
+        fun: 2,
+        noise: "低",
+        space: "小",
+        prescription: "12-20 次",
+        regress: "双手扶墙",
+        progress: "单腿提踵",
+        notes: "顶端停一下，慢慢下放，不要弹。"
+      },
+      {
+        id: "a_glute_bridge",
+        name: "臀桥",
+        pattern: "髋铰链",
+        parts: ["臀", "腿后侧"],
+        equipment: "无",
+        difficulty: 1,
+        fun: 3,
+        noise: "低",
+        space: "小",
+        prescription: "10-15 次",
+        regress: "缩小幅度",
+        progress: "顶端停 2 秒",
+        notes: "顶端夹臀 1 秒，腰不要过度拱。"
+      },
+      {
+        id: "a_bodyweight_good_morning",
+        name: "徒手髋铰链",
+        pattern: "髋铰链",
+        parts: ["臀", "腿后侧"],
+        equipment: "无",
+        difficulty: 2,
+        fun: 2,
+        noise: "低",
+        space: "小",
+        prescription: "8-12 次",
+        regress: "手扶髋部，只做小幅度",
+        progress: "3 秒慢下放",
+        notes: "屁股向后找墙，背保持长，不追求下很低。"
+      },
+      {
+        id: "a_band_hip_hinge",
+        name: "弹力带髋铰链",
+        pattern: "髋铰链",
+        parts: ["臀", "腿后侧"],
+        equipment: "弹力带",
+        difficulty: 2,
+        fun: 3,
+        noise: "低",
+        space: "小",
+        prescription: "10-12 次",
+        regress: "减小弹力带张力",
+        progress: "顶端夹臀停 1 秒",
+        notes: "弹力带固定在脚下或髋部，动作保持慢而稳。"
+      },
+      {
+        id: "a_backpack_front_squat",
+        name: "背包抱胸深蹲",
+        pattern: "蹲",
+        parts: ["腿", "臀"],
+        equipment: "背包",
+        difficulty: 3,
+        fun: 4,
+        noise: "低",
+        space: "小",
+        prescription: "8-10 次",
+        regress: "换成徒手深蹲",
+        progress: "增加背包重量或放慢下放",
+        notes: "背包贴近胸口，肋骨不要外翻。"
+      },
+      {
+        id: "a_backpack_rdl",
+        name: "背包罗马尼亚硬拉",
+        pattern: "髋铰链",
+        parts: ["臀", "腿后侧"],
+        equipment: "背包",
+        difficulty: 3,
+        fun: 3,
+        noise: "低",
+        space: "小",
+        prescription: "8-12 次",
+        regress: "徒手髋铰链",
+        progress: "更重背包或慢速离心",
+        notes: "屁股向后找墙，背包贴腿下放，背保持长。"
+      },
+      {
+        id: "a_backpack_good_morning",
+        name: "背包早安式",
+        pattern: "髋铰链",
+        parts: ["臀", "腿后侧"],
+        equipment: "背包",
+        difficulty: 2,
+        fun: 3,
+        noise: "低",
+        space: "小",
+        prescription: "8-10 次",
+        regress: "空手练髋铰链",
+        progress: "慢速 3 秒下放",
+        notes: "背包背在背上，保持脊柱中立。"
+      },
+      {
+        id: "a_db_goblet_squat",
+        name: "哑铃高脚杯深蹲",
+        pattern: "蹲",
+        parts: ["腿", "臀"],
+        equipment: "哑铃",
+        difficulty: 3,
+        fun: 4,
+        noise: "低",
+        space: "小",
+        prescription: "8-10 次",
+        regress: "减轻重量或改徒手深蹲",
+        progress: "底部停顿 2 秒",
+        notes: "哑铃贴近胸口，站起时脚跟稳稳踩地。"
+      },
+      {
+        id: "a_dumbbell_deadlift",
+        name: "哑铃硬拉",
+        pattern: "髋铰链",
+        parts: ["臀", "腿后侧"],
+        equipment: "哑铃",
+        difficulty: 3,
+        fun: 3,
+        noise: "低",
+        space: "小",
+        prescription: "8-12 次",
+        regress: "减少重量或把哑铃垫高",
+        progress: "双哑铃或慢速离心",
+        notes: "哑铃靠近身体，先髋后移，再站高。"
+      },
+      {
+        id: "a_wall_pushup",
+        name: "墙面俯卧撑",
+        pattern: "推",
+        parts: ["胸", "肩", "手臂"],
+        equipment: "无",
+        difficulty: 1,
+        fun: 2,
+        noise: "低",
+        space: "小",
+        prescription: "8-15 次",
+        regress: "站得更靠近墙",
+        progress: "换成桌沿或地面版本",
+        notes: "身体像一块板，手肘约 45 度，不耸肩。"
+      },
+      {
+        id: "a_knee_pushup",
+        name: "跪姿俯卧撑",
+        pattern: "推",
+        parts: ["胸", "肩", "手臂"],
+        equipment: "无",
+        difficulty: 3,
+        fun: 3,
+        noise: "低",
+        space: "小",
+        prescription: "6-10 次",
+        regress: "墙面俯卧撑",
+        progress: "地面标准俯卧撑",
+        notes: "从膝盖到头保持一条斜线，不要塌腰硬顶。"
+      },
+      {
+        id: "a_pike_pushup",
+        name: "派克推",
+        pattern: "推",
+        parts: ["肩", "手臂"],
+        equipment: "无",
+        difficulty: 4,
+        fun: 4,
+        noise: "低",
+        space: "中",
+        prescription: "5-8 次",
+        regress: "缩小角度或做下犬式肩推",
+        progress: "脚垫高",
+        notes: "头向两手之间移动，不要憋气；仅放在高精力卡里。"
+      },
+      {
+        id: "a_backpack_press",
+        name: "背包推举",
+        pattern: "推",
+        parts: ["肩", "手臂"],
+        equipment: "背包",
+        difficulty: 3,
+        fun: 4,
+        noise: "低",
+        space: "小",
+        prescription: "6-10 次",
+        regress: "减少背包重量",
+        progress: "单手推举或增加重量",
+        notes: "肋骨收住，不要用腰把背包顶上去。"
+      },
+      {
+        id: "a_db_floor_press",
+        name: "哑铃地板卧推",
+        pattern: "推",
+        parts: ["胸", "肩", "手臂"],
+        equipment: "哑铃",
+        difficulty: 3,
+        fun: 4,
+        noise: "低",
+        space: "小",
+        prescription: "8-12 次",
+        regress: "减轻重量或改墙面俯卧撑",
+        progress: "顶端停顿或更慢下放",
+        notes: "上臂轻触地面即可，不要砸地。"
+      },
+      {
+        id: "a_scapular_wall_slide",
+        name: "墙天使滑动",
+        pattern: "拉",
+        parts: ["上背", "肩"],
+        equipment: "无",
+        difficulty: 1,
+        fun: 2,
+        noise: "低",
+        space: "小",
+        prescription: "8-12 次",
+        regress: "手臂离墙一点点",
+        progress: "更慢、更高质量地滑动",
+        notes: "肋骨收住，肩胛骨像往后裤兜方向滑。"
+      },
+      {
+        id: "a_prone_w_raise",
+        name: "俯卧 W 提拉",
+        pattern: "拉",
+        parts: ["上背", "肩"],
+        equipment: "无",
+        difficulty: 2,
+        fun: 3,
+        noise: "低",
+        space: "小",
+        prescription: "8-12 次",
+        regress: "只做肩胛后收",
+        progress: "顶端停 2 秒",
+        notes: "趴姿下手肘弯成 W，轻轻夹背，不抬头硬仰。"
+      },
+      {
+        id: "a_reverse_snow_angel",
+        name: "俯卧反向雪天使",
+        pattern: "拉",
+        parts: ["上背", "肩"],
+        equipment: "无",
+        difficulty: 2,
+        fun: 3,
+        noise: "低",
+        space: "小",
+        prescription: "6-10 次",
+        regress: "缩小手臂移动范围",
+        progress: "动作更慢",
+        notes: "手臂贴近地面上方滑动，肩不要耸。"
+      },
+      {
+        id: "a_band_row",
+        name: "弹力带划船",
+        pattern: "拉",
+        parts: ["背", "上背", "手臂"],
+        equipment: "弹力带",
+        difficulty: 2,
+        fun: 3,
+        noise: "低",
+        space: "小",
+        prescription: "10-15 次",
+        regress: "减小弹力带张力",
+        progress: "停 1 秒夹背",
+        notes: "先沉肩，再把手肘向后拉；不要耸肩抢动作。"
+      },
+      {
+        id: "a_band_pull_apart",
+        name: "弹力带拉开",
+        pattern: "拉",
+        parts: ["上背", "肩"],
+        equipment: "弹力带",
+        difficulty: 1,
+        fun: 3,
+        noise: "低",
+        space: "小",
+        prescription: "12-20 次",
+        regress: "握宽一点",
+        progress: "握窄一点或停顿",
+        notes: "手臂接近伸直，肩不要耸到耳朵旁。"
+      },
+      {
+        id: "a_band_face_pull",
+        name: "弹力带面拉",
+        pattern: "拉",
+        parts: ["上背", "肩"],
+        equipment: "弹力带",
+        difficulty: 2,
+        fun: 4,
+        noise: "低",
+        space: "小",
+        prescription: "10-15 次",
+        regress: "减小张力",
+        progress: "拉到脸前停 1 秒",
+        notes: "手肘略高，想象把弹力带拉向眉毛两侧。"
+      },
+      {
+        id: "a_band_pallof_press",
+        name: "Pallof Press 抗旋转推",
+        pattern: "核心",
+        parts: ["核心"],
+        equipment: "弹力带",
+        difficulty: 2,
+        fun: 4,
+        noise: "低",
+        space: "小",
+        prescription: "每侧 8-10 次",
+        regress: "站近固定点，降低张力",
+        progress: "手臂伸直后停 2 秒",
+        notes: "弹力带固定在侧面，躯干不要被拉着旋转。"
+      },
+      {
+        id: "a_backpack_row",
+        name: "背包俯身划船",
+        pattern: "拉",
+        parts: ["背", "上背", "手臂"],
+        equipment: "背包",
+        difficulty: 3,
+        fun: 4,
+        noise: "低",
+        space: "小",
+        prescription: "8-12 次",
+        regress: "减少重量，单手扶椅子",
+        progress: "顶端停顿 2 秒",
+        notes: "髋部后移，背保持稳定，背包向肚脐方向拉。"
+      },
+      {
+        id: "a_db_one_arm_row",
+        name: "哑铃单臂划船",
+        pattern: "拉",
+        parts: ["背", "上背", "手臂"],
+        equipment: "哑铃",
+        difficulty: 3,
+        fun: 4,
+        noise: "低",
+        space: "小",
+        prescription: "每侧 8-12 次",
+        regress: "减轻重量，一手扶桌沿",
+        progress: "顶端停 1 秒",
+        notes: "肩膀远离耳朵，把哑铃拉向髋部侧边。"
+      },
+      {
+        id: "a_dead_bug",
+        name: "死虫",
+        pattern: "核心",
+        parts: ["核心"],
+        equipment: "无",
+        difficulty: 2,
+        fun: 3,
+        noise: "低",
+        space: "小",
+        prescription: "每侧 6-10 次",
+        regress: "只动腿或只动手",
+        progress: "动作更慢，脚跟轻点地",
+        notes: "下背轻贴地面，动作越慢越有效。"
+      },
+      {
+        id: "a_bird_dog",
+        name: "鸟狗",
+        pattern: "核心",
+        parts: ["核心", "背"],
+        equipment: "无",
+        difficulty: 2,
+        fun: 3,
+        noise: "低",
+        space: "小",
+        prescription: "每侧 6-10 次",
+        regress: "只伸腿或只伸手",
+        progress: "顶端停 2 秒",
+        notes: "骨盆不要晃，想象背上放了一杯水。"
+      },
+      {
+        id: "a_plank",
+        name: "平板支撑",
+        pattern: "核心",
+        parts: ["核心", "肩"],
+        equipment: "无",
+        difficulty: 3,
+        fun: 2,
+        noise: "低",
+        space: "小",
+        prescription: "20-40 秒",
+        regress: "膝盖落地平板",
+        progress: "交替抬脚或延长时间",
+        notes: "宁可短一点，也不要塌腰硬撑。"
+      },
+      {
+        id: "a_side_plank",
+        name: "侧平板",
+        pattern: "核心",
+        parts: ["核心", "肩"],
+        equipment: "无",
+        difficulty: 3,
+        fun: 3,
+        noise: "低",
+        space: "小",
+        prescription: "每侧 15-30 秒",
+        regress: "屈膝侧平板",
+        progress: "上侧腿抬起",
+        notes: "肩膀远离耳朵，身体从头到脚成一条线。"
+      },
+      {
+        id: "a_suitcase_carry_backpack",
+        name: "单侧背包搬运",
+        pattern: "搬运",
+        parts: ["核心", "握力"],
+        equipment: "背包",
+        difficulty: 2,
+        fun: 4,
+        noise: "低",
+        space: "中",
+        prescription: "每侧 30-45 秒",
+        regress: "减轻背包重量",
+        progress: "走更慢或增加重量",
+        notes: "身体不要向一边歪，像端着一杯水走路。"
+      },
+      {
+        id: "a_farmer_carry_dumbbell",
+        name: "哑铃农夫走",
+        pattern: "搬运",
+        parts: ["核心", "握力"],
+        equipment: "哑铃",
+        difficulty: 3,
+        fun: 4,
+        noise: "低",
+        space: "中",
+        prescription: "30-60 秒",
+        regress: "减轻重量或原地站立",
+        progress: "更重或更慢",
+        notes: "肩膀向下，步子小而稳，不追求速度。"
+      },
+      {
+        id: "a_lateral_step_reach",
+        name: "左右侧步触地",
+        pattern: "移动",
+        parts: ["腿", "臀"],
+        equipment: "无",
+        difficulty: 2,
+        fun: 4,
+        noise: "中",
+        space: "中",
+        prescription: "30 秒",
+        regress: "只做左右侧步",
+        progress: "降低重心或加节奏",
+        notes: "早上不追求爆发，动作可控即可。"
+      },
+      {
+        id: "a_bear_crawl",
+        name: "熊爬",
+        pattern: "移动",
+        parts: ["核心", "肩", "腿"],
+        equipment: "无",
+        difficulty: 4,
+        fun: 5,
+        noise: "中",
+        space: "中",
+        prescription: "20-30 秒",
+        regress: "原地熊式支撑",
+        progress: "前后左右移动",
+        notes: "膝盖离地一点点，背保持平；仅放在高精力卡里。"
+      }
+    ];
+
+
+    const DEFAULT_ACTION_DETAILS = {
+      "a_body_squat": {
+            "steps": [
+                  "双脚约与髋同宽，脚尖自然微向外。",
+                  "臀部向后向下坐，膝盖跟随脚尖方向。",
+                  "脚跟和前脚掌都踩稳，呼气站起。"
+            ],
+            "feel": "主要感觉大腿前侧和臀部发力，脚掌稳定踩地。",
+            "mistakes": [
+                  "膝盖明显向内扣。",
+                  "脚跟抬起或身体过度前扑。",
+                  "为了蹲更低而憋气硬撑。"
+            ],
+            "stopIf": "膝、髋或腰出现疼痛，或无法保持脚掌稳定时停止，改用更浅幅度。"
+      },
+      "a_chair_squat": {
+            "steps": [
+                  "站在稳固椅子前，脚掌踩稳。",
+                  "臀部向后找椅面，轻触后立刻站起。",
+                  "站起时保持膝盖朝脚尖方向。"
+            ],
+            "feel": "主要感觉大腿和臀部发力，动作应安静可控。",
+            "mistakes": [
+                  "完全塌坐到椅子上。",
+                  "站起时膝盖内扣。",
+                  "椅子不稳或会滑动。"
+            ],
+            "stopIf": "椅子不稳、膝盖疼痛或站起时失去控制时停止。"
+      },
+      "a_reverse_lunge": {
+            "steps": [
+                  "站稳后单脚向后迈一步，前脚全脚掌踩稳。",
+                  "身体垂直下降到可控深度。",
+                  "用前侧腿发力回到站姿，左右交替。"
+            ],
+            "feel": "主要感觉前侧腿和臀部发力。",
+            "mistakes": [
+                  "步子太小导致前膝压力过大。",
+                  "身体左右晃动。",
+                  "后脚落地太重。"
+            ],
+            "stopIf": "膝盖疼痛、平衡明显失控或前脚踩不稳时停止，改成小幅后撤。"
+      },
+      "a_step_up": {
+            "steps": [
+                  "确认台阶稳固，把一只脚完整踩在台阶上。",
+                  "用上方腿发力站起，身体保持高。",
+                  "慢慢下回地面，换边重复。"
+            ],
+            "feel": "主要感觉上方腿的大腿和臀部发力。",
+            "mistakes": [
+                  "用下方脚蹬地弹起。",
+                  "膝盖向内扣。",
+                  "台阶过高导致身体歪斜。"
+            ],
+            "stopIf": "台阶不稳、膝盖疼痛或上下台阶失控时停止。"
+      },
+      "a_calf_raise": {
+            "steps": [
+                  "双脚站稳，可轻扶墙面。",
+                  "脚跟慢慢抬高到可控位置。",
+                  "顶端停一下，再慢慢放下。"
+            ],
+            "feel": "主要感觉小腿后侧发力，脚踝稳定。",
+            "mistakes": [
+                  "上下弹动太快。",
+                  "脚踝向内或向外倒。",
+                  "为了抬高而身体前扑。"
+            ],
+            "stopIf": "脚踝或跟腱不适、抽筋或站不稳时停止。"
+      },
+      "a_glute_bridge": {
+            "steps": [
+                  "仰卧屈膝，脚跟靠近臀部。",
+                  "轻收腹，夹臀把髋部抬起。",
+                  "顶端停一秒，再慢慢放下。"
+            ],
+            "feel": "主要感觉臀部发力，腿后侧可轻微参与。",
+            "mistakes": [
+                  "用腰向上拱。",
+                  "脚离身体太远导致腿后侧抽筋。",
+                  "顶端过度挺肋骨。"
+            ],
+            "stopIf": "腰痛、腿后侧抽筋明显或无法感觉臀部发力时停止，缩小幅度。"
+      },
+      "a_bodyweight_good_morning": {
+            "steps": [
+                  "双脚站稳，手可放在髋部。",
+                  "膝盖微弯，臀部向后找墙。",
+                  "背保持长，感觉腿后侧拉长后站起。"
+            ],
+            "feel": "主要感觉臀部和腿后侧控制发力。",
+            "mistakes": [
+                  "弯腰驼背向下折。",
+                  "膝盖锁死。",
+                  "追求下得很低。"
+            ],
+            "stopIf": "腰部压力明显、腿后侧刺痛或背无法保持稳定时停止。"
+      },
+      "a_band_hip_hinge": {
+            "steps": [
+                  "把弹力带安全固定在脚下或髋部位置。",
+                  "保持张力，臀部向后做髋铰链。",
+                  "用臀部发力回到站姿。"
+            ],
+            "feel": "主要感觉臀部和腿后侧发力，弹力带提供阻力。",
+            "mistakes": [
+                  "弹力带固定不稳。",
+                  "用腰硬拉回。",
+                  "动作太快导致张力失控。"
+            ],
+            "stopIf": "弹力带滑脱、腰痛或张力无法控制时停止。"
+      },
+      "a_backpack_front_squat": {
+            "steps": [
+                  "双手抱住背包，让它贴近胸口。",
+                  "脚掌踩稳后下蹲到可控深度。",
+                  "保持背包贴身，呼气站起。"
+            ],
+            "feel": "主要感觉腿和臀部发力，躯干保持稳定。",
+            "mistakes": [
+                  "背包离身体太远。",
+                  "肋骨外翻或腰向后拱。",
+                  "为了负重牺牲下蹲控制。"
+            ],
+            "stopIf": "腰、膝不适或背包抱不稳时停止，改徒手深蹲。"
+      },
+      "a_backpack_rdl": {
+            "steps": [
+                  "双手拿住背包，站稳。",
+                  "臀部向后，背包贴近腿向下。",
+                  "感觉腿后侧拉长后，用臀部站起。"
+            ],
+            "feel": "主要感觉臀部和腿后侧发力。",
+            "mistakes": [
+                  "背包离身体太远。",
+                  "弯腰驼背。",
+                  "下放过低导致腰顶住。"
+            ],
+            "stopIf": "腰部不适、背无法保持长或背包晃动失控时停止。"
+      },
+      "a_backpack_good_morning": {
+            "steps": [
+                  "背好背包，重量保守。",
+                  "膝盖微弯，臀部向后做髋铰链。",
+                  "保持背部稳定，回到站姿。"
+            ],
+            "feel": "主要感觉臀部和腿后侧发力。",
+            "mistakes": [
+                  "用腰折叠身体。",
+                  "背包太重。",
+                  "低头塌胸。"
+            ],
+            "stopIf": "腰部有压力或背包影响姿势时停止，改徒手髋铰链。"
+      },
+      "a_db_goblet_squat": {
+            "steps": [
+                  "双手托住哑铃一端，贴近胸口。",
+                  "脚掌踩稳，下蹲到可控深度。",
+                  "膝盖跟随脚尖方向，站起。"
+            ],
+            "feel": "主要感觉腿和臀部发力，重量靠近身体。",
+            "mistakes": [
+                  "哑铃离胸口太远。",
+                  "膝盖内扣。",
+                  "下蹲时脚跟抬起。"
+            ],
+            "stopIf": "膝、腰不适或无法稳住哑铃时停止，改徒手版本。"
+      },
+      "a_dumbbell_deadlift": {
+            "steps": [
+                  "双手持哑铃，放在身体前侧。",
+                  "臀部向后，哑铃贴近腿下放。",
+                  "脚掌踩稳，用臀腿站起。"
+            ],
+            "feel": "主要感觉臀部和腿后侧发力。",
+            "mistakes": [
+                  "哑铃离身体太远。",
+                  "背部弯曲。",
+                  "下放超过可控范围。"
+            ],
+            "stopIf": "腰痛、握不稳或哑铃触地失控时停止。"
+      },
+      "a_wall_pushup": {
+            "steps": [
+                  "双手撑墙，身体从头到脚保持一条线。",
+                  "手肘约 45 度弯曲，胸口靠近墙。",
+                  "推墙回到起始位置。"
+            ],
+            "feel": "主要感觉胸、肩前侧和手臂发力。",
+            "mistakes": [
+                  "耸肩到耳朵旁。",
+                  "塌腰或撅臀。",
+                  "手肘完全横向打开。"
+            ],
+            "stopIf": "肩、腕疼痛或身体无法保持一条线时停止，站近墙降低难度。"
+      },
+      "a_knee_pushup": {
+            "steps": [
+                  "跪姿撑地，从膝盖到头保持一条斜线。",
+                  "手肘弯曲，胸口向地面靠近。",
+                  "推回起始位置，不要塌腰。"
+            ],
+            "feel": "主要感觉胸、肩和手臂发力。",
+            "mistakes": [
+                  "腰塌下去。",
+                  "手肘过度外展。",
+                  "脖子向前探。"
+            ],
+            "stopIf": "肩、腕或腰不适时停止，改墙面俯卧撑。"
+      },
+      "a_pike_pushup": {
+            "steps": [
+                  "从类似下犬式的位置开始，臀部抬高。",
+                  "头向两手之间移动，手肘弯曲。",
+                  "用肩和手臂推回起始位置。"
+            ],
+            "feel": "主要感觉肩和手臂发力。",
+            "mistakes": [
+                  "头向前冲而不是向两手之间。",
+                  "耸肩憋气。",
+                  "角度太陡导致失控。"
+            ],
+            "stopIf": "肩、颈、腕不适或无法控制下降时停止，改下犬式肩推或墙面俯卧撑。"
+      },
+      "a_backpack_press": {
+            "steps": [
+                  "双手握住背包，放在胸前。",
+                  "收住肋骨，把背包向上推。",
+                  "慢慢放回胸前。"
+            ],
+            "feel": "主要感觉肩和手臂发力。",
+            "mistakes": [
+                  "用腰后仰把背包顶上去。",
+                  "背包晃动太大。",
+                  "憋气硬推。"
+            ],
+            "stopIf": "肩、腰不适或背包无法稳定控制时停止。"
+      },
+      "a_db_floor_press": {
+            "steps": [
+                  "仰卧地面，双手持哑铃，膝盖弯曲。",
+                  "上臂轻触地面后向上推起。",
+                  "慢慢回到上臂轻触地面的位置。"
+            ],
+            "feel": "主要感觉胸、肩前侧和手臂发力。",
+            "mistakes": [
+                  "哑铃下放砸地。",
+                  "手腕过度后折。",
+                  "推起时肩耸起。"
+            ],
+            "stopIf": "肩、肘或腕不适，或哑铃控制不稳时停止。"
+      },
+      "a_scapular_wall_slide": {
+            "steps": [
+                  "背靠墙或站近墙，肋骨轻收。",
+                  "手臂沿墙或靠近墙面慢慢上滑。",
+                  "保持肩膀远离耳朵，再慢慢下滑。"
+            ],
+            "feel": "主要感觉上背和肩胛周围轻微工作。",
+            "mistakes": [
+                  "腰向前拱。",
+                  "耸肩代偿。",
+                  "为了贴墙而硬扭肩。"
+            ],
+            "stopIf": "肩夹痛、手臂麻木或腰无法保持舒适时停止。"
+      },
+      "a_prone_w_raise": {
+            "steps": [
+                  "俯卧，手肘弯成 W 形。",
+                  "轻轻把手肘和手向上提一点。",
+                  "夹背停一下，再慢慢放下。"
+            ],
+            "feel": "主要感觉上背和肩胛后侧发力。",
+            "mistakes": [
+                  "抬头硬仰。",
+                  "手臂抬太高导致腰紧。",
+                  "耸肩。"
+            ],
+            "stopIf": "颈部或腰部不适，或肩前侧夹痛时停止。"
+      },
+      "a_reverse_snow_angel": {
+            "steps": [
+                  "俯卧，手臂放在身体两侧或稍外展。",
+                  "手臂贴近地面上方，慢慢向头顶方向滑。",
+                  "再慢慢滑回身体两侧。"
+            ],
+            "feel": "主要感觉上背和肩胛控制发力。",
+            "mistakes": [
+                  "耸肩。",
+                  "抬头或腰拱。",
+                  "动作范围过大导致肩不适。"
+            ],
+            "stopIf": "肩夹痛、颈部紧张或腰部不适时停止，缩小范围。"
+      },
+      "a_band_row": {
+            "steps": [
+                  "安全固定弹力带，双手握住保持轻张力。",
+                  "先沉肩，再把手肘向后拉。",
+                  "夹背停一下，慢慢还原。"
+            ],
+            "feel": "主要感觉背部、上背和手臂后侧参与。",
+            "mistakes": [
+                  "耸肩拉。",
+                  "身体后仰借力。",
+                  "弹力带固定不稳。"
+            ],
+            "stopIf": "弹力带滑脱、肩前侧疼痛或无法控制回放时停止。"
+      },
+      "a_band_pull_apart": {
+            "steps": [
+                  "双手握住弹力带，手臂接近伸直。",
+                  "肩膀下沉，把弹力带向两侧拉开。",
+                  "慢慢回到起始张力。"
+            ],
+            "feel": "主要感觉上背和肩后侧发力。",
+            "mistakes": [
+                  "耸肩。",
+                  "手肘大幅弯曲。",
+                  "用身体后仰借力。"
+            ],
+            "stopIf": "肩前侧夹痛、手腕不适或弹力带失控时停止。"
+      },
+      "a_band_face_pull": {
+            "steps": [
+                  "弹力带固定在约脸部高度。",
+                  "手肘略高，把弹力带拉向眉毛两侧。",
+                  "停一下后慢慢还原。"
+            ],
+            "feel": "主要感觉上背、肩后侧和肩胛控制。",
+            "mistakes": [
+                  "耸肩。",
+                  "拉到胸口而不是脸部方向。",
+                  "身体后仰借力。"
+            ],
+            "stopIf": "肩夹痛、颈部紧张或弹力带固定不稳时停止。"
+      },
+      "a_band_pallof_press": {
+            "steps": [
+                  "弹力带固定在身体侧面，双手握在胸前。",
+                  "站稳并收住肋骨，把手向前推出。",
+                  "抵抗弹力带旋转，慢慢收回。"
+            ],
+            "feel": "主要感觉核心在抗旋转，身体不被拉偏。",
+            "mistakes": [
+                  "身体跟着弹力带旋转。",
+                  "肩膀耸起。",
+                  "站位太远导致张力过大。"
+            ],
+            "stopIf": "腰部不适、弹力带固定不稳或无法保持身体正对前方时停止。"
+      },
+      "a_backpack_row": {
+            "steps": [
+                  "髋部后移，背保持长。",
+                  "双手握住背包，向肚脐方向拉。",
+                  "夹背停一下，慢慢放下。"
+            ],
+            "feel": "主要感觉背部、上背和手臂发力。",
+            "mistakes": [
+                  "弯腰驼背。",
+                  "用身体甩背包。",
+                  "肩膀耸起。"
+            ],
+            "stopIf": "腰部不适、背包晃动失控或肩痛时停止。"
+      },
+      "a_db_one_arm_row": {
+            "steps": [
+                  "一手扶稳桌沿或大腿，另一手持哑铃。",
+                  "肩膀远离耳朵，把哑铃拉向髋部侧边。",
+                  "顶端停一下，慢慢放下。"
+            ],
+            "feel": "主要感觉背部、上背和手臂发力。",
+            "mistakes": [
+                  "耸肩。",
+                  "身体旋转太多。",
+                  "只用手臂猛拉。"
+            ],
+            "stopIf": "腰、肩不适或支撑点不稳时停止，减轻重量。"
+      },
+      "a_dead_bug": {
+            "steps": [
+                  "仰卧，手臂向上，膝盖弯曲抬起。",
+                  "轻收腹，让下背接近地面。",
+                  "缓慢伸出对侧手脚，再换边。"
+            ],
+            "feel": "主要感觉腹部稳定，不靠腰顶住。",
+            "mistakes": [
+                  "下背明显离地。",
+                  "动作太快。",
+                  "憋气。"
+            ],
+            "stopIf": "腰部不适、无法控制下背或头晕时停止，改只动手或只动腿。"
+      },
+      "a_bird_dog": {
+            "steps": [
+                  "四点支撑，手在肩下，膝在髋下。",
+                  "缓慢伸出对侧手和腿。",
+                  "停一下后收回，换边。"
+            ],
+            "feel": "主要感觉核心和背部稳定，臀部轻微参与。",
+            "mistakes": [
+                  "骨盆左右晃。",
+                  "抬腿太高导致腰拱。",
+                  "低头塌肩。"
+            ],
+            "stopIf": "手腕、腰或膝不适，或无法保持身体稳定时停止。"
+      },
+      "a_plank": {
+            "steps": [
+                  "前臂撑地，脚尖踩地。",
+                  "从头到脚保持一条线，轻收腹。",
+                  "保持能呼吸的时间，宁短勿塌。"
+            ],
+            "feel": "主要感觉核心稳定，肩部支撑。",
+            "mistakes": [
+                  "塌腰硬撑。",
+                  "臀部抬太高。",
+                  "憋气。"
+            ],
+            "stopIf": "腰痛、肩痛、头晕或无法呼吸顺畅时停止，改膝盖平板。"
+      },
+      "a_side_plank": {
+            "steps": [
+                  "侧卧，用前臂支撑，肩在肘上方。",
+                  "抬起髋部，让身体成一条线。",
+                  "保持呼吸，左右都做。"
+            ],
+            "feel": "主要感觉侧腰核心和肩部支撑。",
+            "mistakes": [
+                  "肩耸到耳朵旁。",
+                  "髋部下沉。",
+                  "身体向前或向后翻。"
+            ],
+            "stopIf": "肩、腰或手肘不适，或身体无法保持直线时停止，改屈膝版本。"
+      },
+      "a_suitcase_carry_backpack": {
+            "steps": [
+                  "单手提背包，身体站高。",
+                  "肩膀放下，慢慢走或原地站立。",
+                  "换另一侧重复。"
+            ],
+            "feel": "主要感觉核心抵抗侧弯，握力参与。",
+            "mistakes": [
+                  "身体向提包一侧歪。",
+                  "肩膀耸起。",
+                  "步子太快太乱。"
+            ],
+            "stopIf": "腰侧不适、握不稳或空间不安全时停止，减轻重量。"
+      },
+      "a_farmer_carry_dumbbell": {
+            "steps": [
+                  "双手或单手握哑铃，站高。",
+                  "肩膀放下，步子小而稳。",
+                  "保持身体不歪斜，按时间完成。"
+            ],
+            "feel": "主要感觉核心稳定和握力工作。",
+            "mistakes": [
+                  "耸肩。",
+                  "走太快。",
+                  "哑铃碰腿或晃动太大。"
+            ],
+            "stopIf": "握力失控、腰不适或空间不安全时停止。"
+      },
+      "a_lateral_step_reach": {
+            "steps": [
+                  "站稳，向一侧小步移动。",
+                  "臀部轻向后坐，手向地面方向触碰到可控高度。",
+                  "回到中间，再换另一侧。"
+            ],
+            "feel": "主要感觉腿和臀部参与，心率可轻微上升。",
+            "mistakes": [
+                  "动作太快导致膝盖内扣。",
+                  "弯腰够地而不是髋部后移。",
+                  "脚步太大失去控制。"
+            ],
+            "stopIf": "膝盖、腰或脚踝不适，或空间不足时停止，改左右侧步。"
+      },
+      "a_bear_crawl": {
+            "steps": [
+                  "四点支撑，膝盖离地一点点。",
+                  "背保持平，缓慢移动手和脚。",
+                  "动作小而安静，保持呼吸。"
+            ],
+            "feel": "主要感觉核心、肩和腿共同支撑。",
+            "mistakes": [
+                  "臀部抬太高或塌腰。",
+                  "移动太快。",
+                  "肩膀耸起。"
+            ],
+            "stopIf": "腕、肩、腰不适，或无法保持背部稳定时停止，改原地熊式支撑。"
+      }
+};
+
+    const ACTION_PATTERN_GUIDES = {
+      "蹲": {
+        steps: ["站稳并确认脚掌能稳定踩地。", "缓慢完成动作，保持膝盖跟随脚尖方向。", "在可控范围内回到起始姿势。"],
+        feel: "主要感觉腿和臀部发力。",
+        mistakes: ["膝盖明显内扣。", "为了完成次数而动作失控。"],
+        stopIf: "膝、髋或腰出现疼痛，或无法保持站稳时停止。"
+      },
+      "髋铰链": {
+        steps: ["双脚站稳，膝盖微弯。", "臀部向后移动，背保持长。", "用臀部和腿后侧发力回到起始姿势。"],
+        feel: "主要感觉臀部和腿后侧发力。",
+        mistakes: ["弯腰驼背。", "追求过大幅度。"],
+        stopIf: "腰部不适或背无法保持稳定时停止。"
+      },
+      "推": {
+        steps: ["先找到稳定支撑和起始姿势。", "肩膀远离耳朵，缓慢下放或推起。", "保持身体稳定，按可控次数完成。"],
+        feel: "主要感觉胸、肩和手臂发力。",
+        mistakes: ["耸肩。", "塌腰或憋气。"],
+        stopIf: "肩、腕、肘或腰出现疼痛时停止并改用降级版本。"
+      },
+      "拉": {
+        steps: ["先沉肩并保持身体稳定。", "把手肘向后或向外拉到可控位置。", "停一下后慢慢回到起始位置。"],
+        feel: "主要感觉上背、背部和肩胛周围发力。",
+        mistakes: ["耸肩。", "用身体甩动借力。"],
+        stopIf: "肩夹痛、颈部紧张或器械固定不稳时停止。"
+      },
+      "核心": {
+        steps: ["先找到能稳定呼吸的起始姿势。", "轻收腹，保持躯干不塌不扭。", "动作慢一点，优先保持控制。"],
+        feel: "主要感觉腹部和躯干在稳定身体。",
+        mistakes: ["憋气。", "腰部代偿或明显拱起。"],
+        stopIf: "腰痛、头晕或无法保持呼吸时停止并改用降级版本。"
+      },
+      "搬运": {
+        steps: ["拿起负重后先站高。", "肩膀放下，身体不要歪斜。", "步子小而稳，按时间完成。"],
+        feel: "主要感觉核心稳定和握力工作。",
+        mistakes: ["身体歪向一边。", "负重晃动太大。"],
+        stopIf: "握不稳、腰不适或空间不安全时停止。"
+      },
+      "移动": {
+        steps: ["先确认周围空间安全。", "用较小幅度开始移动。", "保持动作可控，不追求速度。"],
+        feel: "主要感觉目标部位发力，心率可轻微上升。",
+        mistakes: ["动作太快失去控制。", "落地太重或膝盖内扣。"],
+        stopIf: "疼痛、眩晕、脚步失控或空间不足时停止。"
+      }
+    };
+
+    function textToLines(value) {
+      if (Array.isArray(value)) {
+        return value.map(item => String(item || "").trim()).filter(Boolean);
+      }
+      return String(value || "")
+        .split(/\n|；|;/)
+        .map(item => item.trim())
+        .filter(Boolean);
+    }
+
+    function linesToText(value) {
+      return textToLines(value).join("\n");
+    }
+
+    function normalizeDemoType(value) {
+      return value === "video" || value === "image" ? value : "";
+    }
+
+    function actionDetailFallback(action = {}) {
+      return ACTION_PATTERN_GUIDES[action.pattern] || {
+        steps: ["用稳定、可控的节奏完成动作。", "保持顺畅呼吸，优先动作质量。"],
+        feel: "主要感觉目标部位发力。",
+        mistakes: ["动作失控或憋气。"],
+        stopIf: "出现疼痛、眩晕或明显不适时停止。"
+      };
+    }
+
+    function normalizeActionFields(action = {}, defaultAction = null) {
+      const base = defaultAction || {};
+      const merged = { ...base, ...action };
+      const guide = actionDetailFallback(merged);
+      const fallbackSteps = textToLines(base.steps).length ? textToLines(base.steps) : textToLines(guide.steps);
+      const fallbackMistakes = textToLines(base.mistakes).length ? textToLines(base.mistakes) : textToLines(guide.mistakes);
+
+      return {
+        ...merged,
+        steps: textToLines(merged.steps).length ? textToLines(merged.steps) : fallbackSteps,
+        feel: String(merged.feel || base.feel || guide.feel || "主要感觉目标部位发力。"),
+        mistakes: textToLines(merged.mistakes).length ? textToLines(merged.mistakes) : fallbackMistakes,
+        stopIf: String(merged.stopIf || base.stopIf || guide.stopIf || "出现疼痛、眩晕或明显不适时停止。"),
+        advanced: Boolean(merged.advanced) || Number(merged.difficulty || 0) >= 4,
+        demoType: normalizeDemoType(merged.demoType || base.demoType),
+        demoSrc: String(merged.demoSrc || base.demoSrc || "").trim(),
+        demoPoster: String(merged.demoPoster || base.demoPoster || "").trim(),
+        demoCredit: String(merged.demoCredit || base.demoCredit || "").trim()
+      };
+    }
+
+    DEFAULT_ACTIONS.forEach((action, index) => {
+      const details = DEFAULT_ACTION_DETAILS[action.id] || {};
+      DEFAULT_ACTIONS[index] = normalizeActionFields({ ...action, ...details, advanced: Boolean(details.advanced) || Number(action.difficulty || 0) >= 4 });
+    });
+
+    const DEFAULT_COMBOS = [
+      {
+        id: "c_minimum",
+        name: "5 分钟徒手启动卡",
+        scenario: "低精力、拖延、只想证明今天没有断线。",
+        actionIds: ["a_scapular_wall_slide", "a_body_squat", "a_wall_pushup", "a_dead_bug"],
+        scheme: "每个动作 35-40 秒，动作间换气 15-20 秒；只做 1 轮。",
+        focus: "从上背、蹲、推、核心轻轻启动。",
+        difficulty: 2,
+        fun: 3,
+        idealMinutes: 5,
+        isMinimum: true,
+        completion: "开始并做完 4 个动作，就算完成。"
+      },
+      {
+        id: "c_5_no_legs_start",
+        name: "5 分钟不练腿启动卡",
+        scenario: "腿部今天不想参与，只想让上背、推和核心醒过来。",
+        actionIds: ["a_scapular_wall_slide", "a_prone_w_raise", "a_wall_pushup", "a_dead_bug"],
+        scheme: "每个动作 35-40 秒，动作间休息 15-20 秒；只做 1 轮。",
+        focus: "上背、肩胛控制、轻推、核心。",
+        difficulty: 2,
+        fun: 3,
+        idealMinutes: 5,
+        isMinimum: true,
+        completion: "做完 1 轮即可，不追求酸胀。"
+      },
+      {
+        id: "c_5_lower_start",
+        name: "5 分钟下肢启动卡",
+        scenario: "想安静地叫醒腿臀，不想进入正式训练模式。",
+        actionIds: ["a_body_squat", "a_glute_bridge", "a_calf_raise"],
+        scheme: "深蹲 8 次、臀桥 12 次、提踵 15 次；循环 1-2 轮。",
+        focus: "腿、臀、小腿的轻量启动。",
+        difficulty: 1,
+        fun: 2,
+        idealMinutes: 5,
+        isMinimum: true,
+        completion: "完成 1 轮就算成功，第二轮是加分。"
+      },
+      {
+        id: "c_5_core_back_reset",
+        name: "5 分钟核心上背重启卡",
+        scenario: "睡醒僵硬，但不想练腿，也不想出汗。",
+        actionIds: ["a_dead_bug", "a_bird_dog", "a_prone_w_raise"],
+        scheme: "每个动作 40 秒，休息 20 秒；循环 1-2 轮。",
+        focus: "核心控制、背部唤醒、肩胛轻收。",
+        difficulty: 2,
+        fun: 3,
+        idealMinutes: 5,
+        isMinimum: true,
+        completion: "动作慢一点，做完一轮也算完成。"
+      },
+      {
+        id: "c_full_body_base",
+        name: "12 分钟全身 A 卡",
+        scenario: "普通早晨，想替换一次快走，但不想太复杂。",
+        actionIds: ["a_body_squat", "a_bodyweight_good_morning", "a_wall_pushup", "a_dead_bug"],
+        scheme: "每个动作 8-12 次，循环 2 轮；动作间休息 20-40 秒。",
+        focus: "蹲、髋、推、核心的基础覆盖。",
+        difficulty: 2,
+        fun: 3,
+        idealMinutes: 12,
+        isMinimum: false,
+        completion: "做完 2 轮；只做 1 轮也记为低摩擦完成。"
+      },
+      {
+        id: "c_12_full_body_b",
+        name: "12 分钟全身 B 卡",
+        scenario: "想比基础卡多一点变化，但仍然保持安静。",
+        actionIds: ["a_reverse_lunge", "a_glute_bridge", "a_prone_w_raise", "a_bird_dog"],
+        scheme: "每个动作 6-10 次或 30 秒，循环 2 轮。",
+        focus: "单腿、臀桥、上背、核心控制。",
+        difficulty: 3,
+        fun: 4,
+        idealMinutes: 12,
+        isMinimum: false,
+        completion: "每个动作都做过 2 轮；弓步可缩小幅度。"
+      },
+      {
+        id: "c_12_no_legs",
+        name: "12 分钟不练腿上背核心卡",
+        scenario: "下肢想休息，但仍想完成一张力量任务卡。",
+        actionIds: ["a_scapular_wall_slide", "a_prone_w_raise", "a_wall_pushup", "a_dead_bug", "a_reverse_snow_angel"],
+        scheme: "每个动作 8-12 次或 30 秒，循环 2 轮。",
+        focus: "上背、肩胛控制、轻推、核心。",
+        difficulty: 2,
+        fun: 3,
+        idealMinutes: 12,
+        isMinimum: false,
+        completion: "做完 2 轮；上背有热感即可。"
+      },
+      {
+        id: "c_animal_move",
+        name: "12 分钟趣味移动卡",
+        scenario: "觉得力量训练无聊，想要更像小游戏。",
+        actionIds: ["a_lateral_step_reach", "a_body_squat", "a_bird_dog", "a_wall_pushup"],
+        scheme: "30 秒动作 / 20-30 秒休息，循环 2-3 轮。",
+        focus: "低冲击移动、蹲、核心、推。",
+        difficulty: 2,
+        fun: 5,
+        idealMinutes: 12,
+        isMinimum: false,
+        completion: "完成 2 轮，动作慢也可以。"
+      },
+      {
+        id: "c_20_bodyweight_strength",
+        name: "20 分钟徒手力量卡",
+        scenario: "没有器械，但想要一次完整一点的晨间力量。",
+        actionIds: ["a_body_squat", "a_bodyweight_good_morning", "a_reverse_lunge", "a_wall_pushup", "a_prone_w_raise", "a_dead_bug"],
+        scheme: "每个动作 8-12 次，循环 2-3 轮；动作间休息 20-40 秒。",
+        focus: "下肢、髋主导、推、上背、核心。",
+        difficulty: 3,
+        fun: 4,
+        idealMinutes: 20,
+        isMinimum: false,
+        completion: "完成 2 轮即合格；第 3 轮是奖励关。"
+      },
+      {
+        id: "c_band_upper_back",
+        name: "20 分钟弹力带髋背卡",
+        scenario: "有弹力带，想让臀腿、上背和核心都有一点训练感。",
+        actionIds: ["a_band_hip_hinge", "a_band_row", "a_band_pallof_press", "a_band_pull_apart", "a_body_squat"],
+        scheme: "每个动作 10-15 次；Pallof Press 每侧 8-10 次；循环 2-3 轮。",
+        focus: "髋主导、拉、抗旋转、上背和轻蹲。",
+        difficulty: 2,
+        fun: 4,
+        idealMinutes: 20,
+        isMinimum: false,
+        completion: "弹力带动作质量稳定，做完 2 轮即可。"
+      },
+      {
+        id: "c_backpack_strength",
+        name: "20 分钟背包力量卡",
+        scenario: "家里没有哑铃，但愿意加一点负重。",
+        actionIds: ["a_backpack_front_squat", "a_backpack_rdl", "a_backpack_row", "a_backpack_press", "a_suitcase_carry_backpack"],
+        scheme: "每个动作 8-12 次；搬运每侧 30 秒；循环 2-3 轮。",
+        focus: "腿臀、髋主导、背部、肩推和核心抗侧屈。",
+        difficulty: 3,
+        fun: 4,
+        idealMinutes: 20,
+        isMinimum: false,
+        completion: "完成 2 轮即合格；第 3 轮是奖励关。"
+      },
+      {
+        id: "c_20_dumbbell_base",
+        name: "20 分钟哑铃基础卡",
+        scenario: "有哑铃，想做一张清楚的全身基础卡。",
+        actionIds: ["a_db_goblet_squat", "a_dumbbell_deadlift", "a_db_floor_press", "a_db_one_arm_row", "a_dead_bug"],
+        scheme: "每个动作 8-12 次；单臂划船每侧 8-12 次；循环 2 轮。",
+        focus: "蹲、髋、推、拉、核心。",
+        difficulty: 3,
+        fun: 4,
+        idealMinutes: 20,
+        isMinimum: false,
+        completion: "做完 2 轮，重量保守也可以。"
+      },
+      {
+        id: "c_legs_glutes_core",
+        name: "20 分钟腿臀核心卡",
+        scenario: "想要一种安静但有感觉的早晨训练。",
+        actionIds: ["a_reverse_lunge", "a_glute_bridge", "a_side_plank", "a_step_up"],
+        scheme: "每个动作 8 次或 30 秒，循环 2 轮。",
+        focus: "腿、臀、核心稳定。",
+        difficulty: 3,
+        fun: 4,
+        idealMinutes: 20,
+        isMinimum: false,
+        completion: "每个动作都做过 2 轮；台阶不方便时换另一张卡。"
+      },
+      {
+        id: "c_30_bodyweight_full",
+        name: "30 分钟徒手全身卡",
+        scenario: "今天有完整时间，但仍希望保持低复杂度。",
+        actionIds: ["a_body_squat", "a_bodyweight_good_morning", "a_reverse_lunge", "a_knee_pushup", "a_prone_w_raise", "a_side_plank", "a_lateral_step_reach"],
+        scheme: "每个动作 8-12 次或 30 秒，循环 3 轮；每轮后休息 60 秒。",
+        focus: "徒手全身覆盖，动作顺序从站姿到地面再到移动。",
+        difficulty: 3,
+        fun: 4,
+        idealMinutes: 30,
+        isMinimum: false,
+        completion: "完成 2 轮算合格，3 轮算完整。"
+      },
+      {
+        id: "c_30_weighted_backpack",
+        name: "30 分钟背包负重全身卡",
+        scenario: "有背包，想做一张完整但不花哨的负重卡。",
+        actionIds: ["a_backpack_front_squat", "a_backpack_rdl", "a_backpack_row", "a_backpack_press", "a_suitcase_carry_backpack", "a_dead_bug"],
+        scheme: "每个动作 8-12 次；搬运每侧 40 秒；循环 3 轮。",
+        focus: "负重蹲、髋、拉、推、搬运、核心。",
+        difficulty: 3,
+        fun: 4,
+        idealMinutes: 30,
+        isMinimum: false,
+        completion: "完成 2 轮算合格，第三轮按当天状态决定。"
+      },
+      {
+        id: "c_30_upper_no_legs",
+        name: "30 分钟不练腿上肢核心卡",
+        scenario: "下肢想休息，但今天仍然有时间做上肢和核心。",
+        actionIds: ["a_scapular_wall_slide", "a_prone_w_raise", "a_reverse_snow_angel", "a_wall_pushup", "a_knee_pushup", "a_dead_bug", "a_side_plank"],
+        scheme: "上背动作 10-12 次，推和核心动作 6-10 次或 30 秒；循环 3 轮。",
+        focus: "上背、肩胛、推和核心，不安排腿臀动作。",
+        difficulty: 3,
+        fun: 3,
+        idealMinutes: 30,
+        isMinimum: false,
+        completion: "做满 2 轮即可；肩或腕不适时停止相关动作。"
+      }
+    ];
+
+    let state = loadState();
+
+    function clone(data) {
+      return JSON.parse(JSON.stringify(data));
+    }
+
+    function defaultState() {
+      return {
+        dataVersion: DATA_VERSION,
+        actions: clone(DEFAULT_ACTIONS),
+        combos: clone(DEFAULT_COMBOS),
+        logs: [],
+        todaySuggestion: null,
+        migrationNotice: ""
+      };
+    }
+
+    function mergeDefaults(defaults, existing) {
+      const existingList = Array.isArray(existing)
+        ? existing.filter(item => item && item.id)
+        : [];
+      const existingById = new Map(existingList.map(item => [item.id, item]));
+      const defaultIds = new Set(defaults.map(item => item.id));
+
+      const mergedDefaults = defaults.map(defaultItem => {
+        const existingItem = existingById.get(defaultItem.id);
+        return existingItem ? { ...clone(defaultItem), ...clone(existingItem) } : clone(defaultItem);
+      });
+
+      const custom = existingList
+        .filter(item => !defaultIds.has(item.id))
+        .map(item => clone(item));
+
+      return [...mergedDefaults, ...custom];
+    }
+
+    function mergeDefaultActions(defaults, existing) {
+      const existingList = Array.isArray(existing)
+        ? existing.filter(item => item && item.id)
+        : [];
+      const existingById = new Map(existingList.map(item => [item.id, item]));
+      const defaultIds = new Set(defaults.map(item => item.id));
+
+      const mergedDefaults = defaults.map(defaultAction => {
+        const existingAction = existingById.get(defaultAction.id);
+        const merged = existingAction ? { ...clone(defaultAction), ...clone(existingAction) } : clone(defaultAction);
+        return normalizeActionFields(merged, defaultAction);
+      });
+
+      const custom = existingList
+        .filter(item => !defaultIds.has(item.id))
+        .map(item => normalizeActionFields(clone(item)));
+
+      return [...mergedDefaults, ...custom];
+    }
+
+    function normalizeStatus(log) {
+      if (Object.values(STATUS).includes(log?.status)) return log.status;
+      if (log?.completed === true) return STATUS.STRENGTH_DONE;
+      if (log?.completed === false) return STATUS.SKIPPED;
+      return STATUS.STRENGTH_DONE;
+    }
+
+    function migrateLogs(logs) {
+      if (!Array.isArray(logs)) return [];
+      return logs
+        .filter(log => log && log.date)
+        .map(log => {
+          const status = normalizeStatus(log);
+          const discomfort = Boolean(log.discomfort || log.pain || log.hasPain);
+          return {
+            ...log,
+            status,
+            completed: status === STATUS.STRENGTH_DONE,
+            comboId: log.comboId || null,
+            duration: Number(log.duration || 0),
+            fun: Number(log.fun || 0),
+            feedback: String(log.feedback || ""),
+            discomfort,
+            pauseUntil: discomfort && log.comboId ? (log.pauseUntil || addDaysISO(7, log.date)) : (log.pauseUntil || null),
+            savedAt: log.savedAt || `${log.date}T12:00:00.000`
+          };
+        })
+        .sort(sortLogsDesc);
+    }
+
+    function migrateTodaySuggestion(todaySuggestion) {
+      if (!todaySuggestion || typeof todaySuggestion !== "object") return null;
+      const candidateIds = Array.isArray(todaySuggestion.candidateIds)
+        ? todaySuggestion.candidateIds
+        : (todaySuggestion.primaryId ? [todaySuggestion.primaryId] : []);
+      return {
+        date: todaySuggestion.date || todayISO(),
+        primaryId: todaySuggestion.primaryId || candidateIds[0] || null,
+        fallbackId: todaySuggestion.fallbackId || null,
+        candidateIds,
+        currentIndex: Number.isInteger(todaySuggestion.currentIndex) ? todaySuggestion.currentIndex : 0,
+        prefs: todaySuggestion.prefs || null,
+        generatedAt: todaySuggestion.generatedAt || new Date().toISOString()
+      };
+    }
+
+    function migrateState(parsed) {
+      const migrated = {
+        dataVersion: DATA_VERSION,
+        actions: mergeDefaultActions(DEFAULT_ACTIONS, parsed?.actions),
+        combos: mergeDefaults(DEFAULT_COMBOS, parsed?.combos),
+        logs: migrateLogs(parsed?.logs),
+        todaySuggestion: migrateTodaySuggestion(parsed?.todaySuggestion),
+        migrationNotice: parsed?.dataVersion === DATA_VERSION ? "" : `已自动升级本地数据到 v${DATA_VERSION}：新增默认动作和固定组合卡已按 ID 合并，旧日志和自定义卡片已保留。`
+      };
+      return migrated;
+    }
+
+    function loadState() {
+      const fallback = defaultState();
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return fallback;
+
+      let parsed = null;
+      try {
+        parsed = JSON.parse(raw);
+      } catch (error) {
+        console.warn("Muscle Quest 数据读取失败：", error);
+        return {
+          ...fallback,
+          migrationNotice: "本地数据解析失败。旧 localStorage 没有被主动清空；当前页面先使用安全默认数据。建议先复制导出区域内容或在浏览器开发者工具中备份旧数据后再处理。"
+        };
+      }
+
+      try {
+        const migrated = migrateState(parsed);
+        if (parsed?.dataVersion !== DATA_VERSION) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(stripRuntimeFields(migrated)));
+        }
+        return migrated;
+      } catch (error) {
+        console.warn("Muscle Quest 数据迁移失败：", error);
+        return {
+          ...fallback,
+          logs: Array.isArray(parsed?.logs) ? migrateLogs(parsed.logs) : [],
+          todaySuggestion: migrateTodaySuggestion(parsed?.todaySuggestion),
+          migrationNotice: "数据迁移遇到问题。旧日志已尽量保留，新增默认数据使用安全回退；旧 localStorage 没有被主动清空。"
+        };
+      }
+    }
+
+    function stripRuntimeFields(data) {
+      const copy = { ...data };
+      delete copy.migrationNotice;
+      return copy;
+    }
+
+    function saveState() {
+      state.dataVersion = DATA_VERSION;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stripRuntimeFields(state)));
+    }
+
+    function byId(id) {
+      return state.actions.find(action => action.id === id);
+    }
+
+    function comboById(id) {
+      return state.combos.find(combo => combo.id === id);
+    }
+
+    function todayISO(offsetDays = 0) {
+      const d = new Date();
+      d.setHours(12, 0, 0, 0);
+      d.setDate(d.getDate() + offsetDays);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function addDaysISO(days, fromDate = todayISO()) {
+      const d = new Date(`${fromDate}T12:00:00`);
+      d.setDate(d.getDate() + days);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function makeId(prefix) {
+      return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
+    }
+
+    function sortLogsDesc(a, b) {
+      const aKey = `${a.date || ""} ${a.savedAt || ""}`;
+      const bKey = `${b.date || ""} ${b.savedAt || ""}`;
+      return bKey.localeCompare(aKey);
+    }
+
+    function actionNames(combo) {
+      return comboActions(combo).map(action => action.name);
+    }
+
+    function comboActions(combo) {
+      return (combo?.actionIds || [])
+        .map(id => byId(id))
+        .filter(Boolean);
+    }
+
+    function comboPatterns(combo) {
+      return [...new Set(comboActions(combo).map(action => action.pattern))];
+    }
+
+    function comboParts(combo) {
+      return [...new Set(comboActions(combo).flatMap(action => action.parts || []))];
+    }
+
+    function comboEquipment(combo) {
+      const eqs = comboActions(combo).map(action => action.equipment || "无");
+      return [...new Set(eqs)];
+    }
+
+    function allowedEquipment(selected) {
+      if (!selected || selected === "无") return new Set(["无"]);
+      return new Set(["无", selected]);
+    }
+
+    function isEquipmentCompatible(combo, selectedEquipment) {
+      const allowed = allowedEquipment(selectedEquipment);
+      return comboEquipment(combo).every(eq => allowed.has(eq || "无"));
+    }
+
+    function getEnergyLimit(energy) {
+      if (energy === "低") return 2;
+      if (energy === "高") return 4;
+      return 3;
+    }
+
+    function getTimeRange(minutes) {
+      return TIME_RANGES[Number(minutes)] || TIME_RANGES[12];
+    }
+
+    function isInTimePool(combo, minutes) {
+      const range = getTimeRange(minutes);
+      const ideal = Number(combo?.idealMinutes || 0);
+      return ideal >= range.min && ideal <= range.max;
+    }
+
+    function partMatchesAvoid(parts, avoid) {
+      if (!avoid || avoid === "无") return false;
+      const normalized = (parts || []).join(",");
+      if (avoid === "腿") return /腿|臀|小腿|脚踝/.test(normalized);
+      if (avoid === "手臂") return /手臂|肱|前臂|握力/.test(normalized);
+      if (avoid === "肩") return /肩/.test(normalized);
+      if (avoid === "核心") return /核心|腹|腰/.test(normalized);
+      return normalized.includes(avoid);
+    }
+
+    function isPaused(combo) {
+      const today = todayISO();
+      return state.logs.some(log =>
+        log.comboId === combo?.id &&
+        log.discomfort &&
+        log.pauseUntil &&
+        log.pauseUntil >= today
+      );
+    }
+
+    function getPrefs() {
+      return {
+        minutes: Number(document.querySelector("#todayTime").value),
+        energy: document.querySelector("#todayEnergy").value,
+        equipment: document.querySelector("#todayEquipment").value,
+        avoidPart: document.querySelector("#avoidPart").value
+      };
+    }
+
+    function setPrefs(prefs) {
+      if (!prefs) return;
+      const time = document.querySelector("#todayTime");
+      const energy = document.querySelector("#todayEnergy");
+      const equipment = document.querySelector("#todayEquipment");
+      const avoidPart = document.querySelector("#avoidPart");
+      if (time) time.value = String(prefs.minutes || 12);
+      if (energy) energy.value = prefs.energy || "普通";
+      if (equipment) equipment.value = prefs.equipment || "无";
+      if (avoidPart) avoidPart.value = prefs.avoidPart || "无";
+    }
+
+    function prefsEqual(a, b) {
+      return JSON.stringify({
+        minutes: Number(a?.minutes || 0),
+        energy: a?.energy || "",
+        equipment: a?.equipment || "",
+        avoidPart: a?.avoidPart || ""
+      }) === JSON.stringify({
+        minutes: Number(b?.minutes || 0),
+        energy: b?.energy || "",
+        equipment: b?.equipment || "",
+        avoidPart: b?.avoidPart || ""
+      });
+    }
+
+    function recentCalendarDates(days = 7) {
+      return Array.from({ length: days }, (_, i) => todayISO(-i));
+    }
+
+    function getLogByDate(date) {
+      return state.logs.find(log => log.date === date);
+    }
+
+    function strengthCompleted(log) {
+      return log?.status === STATUS.STRENGTH_DONE || (log?.status == null && log?.completed === true);
+    }
+
+    function recentStrengthLogs(limit = Infinity) {
+      return state.logs
+        .filter(strengthCompleted)
+        .slice()
+        .sort(sortLogsDesc)
+        .slice(0, limit);
+    }
+
+    function completedLogsLast7() {
+      const dates = new Set(recentCalendarDates(7));
+      return state.logs.filter(log => dates.has(log.date) && strengthCompleted(log));
+    }
+
+    function weeklyCoveredPatterns() {
+      const covered = new Set();
+      completedLogsLast7().forEach(log => {
+        const combo = comboById(log.comboId);
+        if (!combo) return;
+        comboPatterns(combo).forEach(pattern => covered.add(pattern));
+      });
+      return covered;
+    }
+
+    function explicitSkipStreak() {
+      let count = 0;
+      const sorted = state.logs.slice().sort(sortLogsDesc);
+      for (const log of sorted) {
+        if (log.status === STATUS.WALK || log.status === STATUS.REST) continue;
+        if (log.status === STATUS.SKIPPED) {
+          count += 1;
+          continue;
+        }
+        if (strengthCompleted(log)) break;
+      }
+      return count;
+    }
+
+    function historicalFunAdjustment(comboId) {
+      const logs = state.logs
+        .filter(log => log.comboId === comboId && strengthCompleted(log) && Number(log.fun) > 0)
+        .slice()
+        .sort(sortLogsDesc)
+        .slice(0, 5);
+      if (!logs.length) return 0;
+      const avg = logs.reduce((sum, log) => sum + Number(log.fun || 0), 0) / logs.length;
+      return (avg - 3) * 2;
+    }
+
+    function actionOverlapRatio(combo, otherCombo) {
+      if (!combo || !otherCombo) return 0;
+      const a = new Set(combo.actionIds || []);
+      const b = new Set(otherCombo.actionIds || []);
+      if (!a.size || !b.size) return 0;
+      let overlap = 0;
+      a.forEach(id => {
+        if (b.has(id)) overlap += 1;
+      });
+      return overlap / a.size;
+    }
+
+    function freshnessPenalty(combo) {
+      let penalty = 0;
+      const recent = recentStrengthLogs(3);
+      const last = recent[0];
+      if (last?.comboId === combo.id) penalty -= 30;
+      const recentCount = recent.filter(log => log.comboId === combo.id).length;
+      penalty -= recentCount * 12;
+
+      if (last?.comboId && last.comboId !== combo.id) {
+        const lastCombo = comboById(last.comboId);
+        if (actionOverlapRatio(combo, lastCombo) > 0.5) penalty -= 10;
+      }
+      return penalty;
+    }
+
+    function isLegalCandidate(combo, prefs, options = {}) {
+      const useTime = options.useTime !== false;
+      if (!combo || comboActions(combo).length === 0) return false;
+      if (useTime && !isInTimePool(combo, prefs.minutes)) return false;
+      if (!isEquipmentCompatible(combo, prefs.equipment)) return false;
+      if (Number(combo.difficulty || 5) > getEnergyLimit(prefs.energy)) return false;
+      if (partMatchesAvoid(comboParts(combo), prefs.avoidPart)) return false;
+      if (isPaused(combo)) return false;
+      return true;
+    }
+
+    function scoreCombo(combo, prefs) {
+      let score = 100;
+      const range = getTimeRange(prefs.minutes);
+      const rangeCenter = (range.min + range.max) / 2;
+      const patterns = comboPatterns(combo);
+      const covered = weeklyCoveredPatterns();
+
+      score += Number(combo.fun || 3) * 4;
+      score -= Math.abs(Number(combo.idealMinutes || rangeCenter) - rangeCenter) * 1.5;
+      score -= Number(combo.difficulty || 3) * 2;
+
+      patterns.forEach(pattern => {
+        if (!covered.has(pattern)) score += 2;
+      });
+
+      if (prefs.equipment !== "无" && comboEquipment(combo).includes(prefs.equipment)) score += 3;
+      if (explicitSkipStreak() >= 2 && combo.isMinimum) score += 18;
+
+      score += historicalFunAdjustment(combo.id);
+      score += freshnessPenalty(combo);
+
+      return score;
+    }
+
+    function rankedCandidates(prefs) {
+      return state.combos
+        .filter(combo => isLegalCandidate(combo, prefs))
+        .map(combo => ({ combo, score: scoreCombo(combo, prefs) }))
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return String(a.combo.id).localeCompare(String(b.combo.id));
+        });
+    }
+
+    function selectMinimumFallback(prefs, primaryId) {
+      const minimumPrefs = { ...prefs, minutes: 5 };
+      const legalMinimums = state.combos
+        .filter(combo => combo.isMinimum || (Number(combo.idealMinutes) >= 3 && Number(combo.idealMinutes) <= 7))
+        .filter(combo => isLegalCandidate(combo, minimumPrefs))
+        .filter(combo => combo.id !== primaryId);
+
+      if (!legalMinimums.length) return null;
+
+      return legalMinimums
+        .map(combo => ({ combo, score: scoreCombo(combo, minimumPrefs) }))
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return String(a.combo.id).localeCompare(String(b.combo.id));
+        })[0].combo;
+    }
+
+    function buildSuggestion(prefs, currentIndex = 0) {
+      const ranked = rankedCandidates(prefs);
+      const candidateIds = ranked.map(item => item.combo.id);
+      if (!candidateIds.length) {
+        return {
+          date: todayISO(),
+          primaryId: null,
+          fallbackId: null,
+          candidateIds: [],
+          currentIndex: -1,
+          prefs,
+          generatedAt: new Date().toISOString()
+        };
+      }
+
+      const safeIndex = Math.max(0, Math.min(currentIndex, candidateIds.length - 1));
+      const primaryId = candidateIds[safeIndex];
+      const fallback = selectMinimumFallback(prefs, primaryId);
+
+      return {
+        date: todayISO(),
+        primaryId,
+        fallbackId: fallback?.id || null,
+        candidateIds,
+        currentIndex: safeIndex,
+        prefs,
+        generatedAt: new Date().toISOString()
+      };
+    }
+
+    function makeReason(combo, suggestion) {
+      if (!combo) return "";
+      const prefs = suggestion?.prefs || getPrefs();
+      const range = getTimeRange(prefs.minutes);
+      const bits = [
+        `位于 ${range.min}—${range.max} 分钟时间池`,
+        `难度 ${combo.difficulty}/5，不超过${prefs.energy}精力上限 ${getEnergyLimit(prefs.energy)}`,
+        prefs.equipment === "无"
+          ? "只包含无器械动作"
+          : `只包含无器械和${prefs.equipment}动作`
+      ];
+
+      if (prefs.avoidPart && prefs.avoidPart !== "无") {
+        bits.push(`已硬过滤“${prefs.avoidPart}”相关主要训练部位`);
+      }
+
+      const recent = recentStrengthLogs(3);
+      if (recent.length) {
+        bits.push("根据最近已完成力量训练做了新鲜度排序");
+      } else {
+        bits.push("暂无已完成力量训练历史，按固定条件稳定排序");
+      }
+
+      const total = suggestion?.candidateIds?.length || 1;
+      const index = Number(suggestion?.currentIndex ?? 0) + 1;
+      bits.push(`当前为合法候选第 ${index}/${total} 张`);
+
+      return bits.join("，") + "。";
+    }
+
+    function recommendToday() {
+      const prefs = getPrefs();
+      state.todaySuggestion = buildSuggestion(prefs, 0);
+      saveState();
+      renderRecommendation();
+      renderRecordBox();
+      renderCoverage();
+      renderRecentLogs();
+    }
+
+    function nextRecommendation() {
+      const prefs = getPrefs();
+      const current = state.todaySuggestion;
+      const shouldRebuild =
+        !current ||
+        current.date !== todayISO() ||
+        !prefsEqual(prefs, current.prefs) ||
+        !Array.isArray(current.candidateIds) ||
+        current.candidateIds.length === 0;
+
+      if (shouldRebuild) {
+        state.todaySuggestion = buildSuggestion(prefs, 0);
+      } else {
+        const nextIndex = (Number(current.currentIndex || 0) + 1) % current.candidateIds.length;
+        const primaryId = current.candidateIds[nextIndex];
+        const fallback = selectMinimumFallback(prefs, primaryId);
+        state.todaySuggestion = {
+          ...current,
+          primaryId,
+          fallbackId: fallback?.id || null,
+          currentIndex: nextIndex,
+          prefs,
+          date: todayISO()
+        };
+      }
+
+      saveState();
+      renderRecommendation();
+      renderRecordBox();
+    }
+
+    function isAdvancedAction(action) {
+      return Boolean(action?.advanced) || Number(action?.difficulty || 0) >= 4;
+    }
+
+    function renderDetailList(items, ordered = false) {
+      const list = textToLines(items);
+      if (!list.length) return `<p class="micro">暂无补充说明。</p>`;
+      const tag = ordered ? "ol" : "ul";
+      return `<${tag}>${list.map(item => `<li>${escapeHTML(item)}</li>`).join("")}</${tag}>`;
+    }
+
+    function renderActionMedia(action, detailId) {
+      const normalized = normalizeActionFields(action);
+      const title = escapeHTML(normalized.name || "动作");
+      const src = normalized.demoSrc;
+      const credit = normalized.demoCredit
+        ? `<p class="micro" style="padding:8px 12px;margin:0;">来源：${escapeHTML(normalized.demoCredit)}</p>`
+        : "";
+
+      if (!src) {
+        return `
+          <div class="demo-media" aria-label="${title} 演示区域">
+            <div class="media-placeholder">暂未配置演示。可以先根据下面的文字步骤完成动作。</div>
+          </div>
+        `;
+      }
+
+      if (normalized.demoType === "video") {
+        const poster = normalized.demoPoster ? ` poster="${escapeHTML(normalized.demoPoster)}"` : "";
+        return `
+          <div class="demo-media" aria-label="${title} 视频演示">
+            <video controls muted playsinline preload="metadata"${poster} aria-describedby="${escapeHTML(detailId)}_text">
+              <source data-src="${escapeHTML(src)}" />
+              当前浏览器不支持视频播放。请根据文字步骤完成动作。
+            </video>
+            <div class="media-fallback" hidden>演示暂时无法加载。请根据下面的文字步骤完成动作。</div>
+            ${credit}
+          </div>
+        `;
+      }
+
+      if (normalized.demoType === "image") {
+        return `
+          <div class="demo-media" aria-label="${title} 图片演示">
+            <img data-src="${escapeHTML(src)}" loading="lazy" alt="${title} 动作演示" />
+            <div class="media-fallback" hidden>演示图片暂时无法加载。请根据下面的文字步骤完成动作。</div>
+            ${credit}
+          </div>
+        `;
+      }
+
+      return `
+        <div class="demo-media" aria-label="${title} 演示区域">
+          <div class="media-placeholder">暂未配置演示。可以先根据下面的文字步骤完成动作。</div>
+        </div>
+      `;
+    }
+
+    function renderActionItem(action, combo, comboClass, index) {
+      const normalized = normalizeActionFields(action);
+      const detailId = `detail_${comboClass}_${combo.id}_${index}_${normalized.id}`.replace(/[^a-zA-Z0-9_-]/g, "_");
+      const parts = (normalized.parts || []).join(" / ") || "未设置";
+      const advanced = isAdvancedAction(normalized);
+
+      return `
+        <div class="action-item">
+          <div class="action-item-top">
+            <div>
+              <div class="action-title-line">
+                <h4>${escapeHTML(normalized.name)}</h4>
+                ${advanced ? `<span class="tag warn">⚠️ 进阶</span>` : ""}
+              </div>
+              <div class="tag-row" style="margin:0;">
+                <span class="tag">${escapeHTML(normalized.pattern)}</span>
+                <span class="tag">建议：${escapeHTML(normalized.prescription)}</span>
+                <span class="tag">部位：${escapeHTML(parts)}</span>
+                <span class="tag">难度 ${escapeHTML(normalized.difficulty)}/5</span>
+              </div>
+            </div>
+            <button class="btn small ghost" type="button" data-action-detail-toggle aria-expanded="false" aria-controls="${escapeHTML(detailId)}">
+              查看演示与要点
+            </button>
+          </div>
+          <div id="${escapeHTML(detailId)}" class="action-detail-panel" hidden>
+            ${renderActionMedia(normalized, detailId)}
+            <div id="${escapeHTML(detailId)}_text" class="detail-grid">
+              ${advanced ? `
+                <div class="detail-block wide">
+                  <h5>进阶提醒</h5>
+                  <p class="micro">这是进阶动作。今天状态一般、动作不熟或出现不适时，优先使用降级版本。</p>
+                </div>
+              ` : ""}
+              <div class="detail-block">
+                <h5>操作步骤</h5>
+                ${renderDetailList(normalized.steps, true)}
+              </div>
+              <div class="detail-block">
+                <h5>主要发力感受</h5>
+                <p>${escapeHTML(normalized.feel)}</p>
+              </div>
+              <div class="detail-block">
+                <h5>常见错误</h5>
+                ${renderDetailList(normalized.mistakes)}
+              </div>
+              <div class="detail-block">
+                <h5>降级版本</h5>
+                <p>${escapeHTML(normalized.regress || "降低幅度、减少次数或选择更稳定的版本。")}</p>
+              </div>
+              <div class="detail-block">
+                <h5>进阶版本</h5>
+                <p>${escapeHTML(normalized.progress || "在动作稳定后再增加难度。")}</p>
+              </div>
+              <div class="detail-block">
+                <h5>停止条件</h5>
+                <p>${escapeHTML(normalized.stopIf)}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderComboResult(combo, label, className, reason) {
+      if (!combo) return "";
+      const actions = comboActions(combo);
+      const eqs = comboEquipment(combo).join(" / ") || "无";
+      const patterns = comboPatterns(combo).join(" / ") || "未设置";
+      const parts = comboParts(combo).join(" / ") || "未设置";
+
+      return `
+        <article class="combo-card ${className}">
+          <div class="card-top">
+            <div>
+              <div class="tag ${className === "main" ? "hot" : "good"}">${escapeHTML(label)}</div>
+              <h3>${escapeHTML(combo.name)}</h3>
+            </div>
+            <div class="tag-row" style="justify-content:flex-end;margin:0;">
+              <span class="tag">约 ${escapeHTML(combo.idealMinutes)} 分钟</span>
+              <span class="tag">难度 ${escapeHTML(combo.difficulty)}/5</span>
+              <span class="tag">趣味 ${escapeHTML(combo.fun)}/5</span>
+            </div>
+          </div>
+          ${reason ? `<p class="micro">${escapeHTML(reason)}</p>` : ""}
+          <div class="tag-row">
+            <span class="tag">模式：${escapeHTML(patterns)}</span>
+            <span class="tag">部位：${escapeHTML(parts)}</span>
+            <span class="tag">器械：${escapeHTML(eqs)}</span>
+          </div>
+          <p><strong>适合场景：</strong>${escapeHTML(combo.scenario)}</p>
+          <p><strong>轮数 / 计时：</strong>${escapeHTML(combo.scheme)}</p>
+          <p><strong>训练重点：</strong>${escapeHTML(combo.focus)}</p>
+          <div class="action-stack">
+            ${actions.map((action, index) => renderActionItem(action, combo, className, index)).join("")}
+          </div>
+          <p style="margin-top:10px;"><strong>完成标准：</strong>${escapeHTML(combo.completion)}</p>
+        </article>
+      `;
+    }
+
+    function renderRecommendation() {
+      const suggestion = state.todaySuggestion;
+      const box = document.querySelector("#recommendation");
+
+      if (!suggestion || suggestion.date !== todayISO()) {
+        box.innerHTML = `<div class="muted-box">点击按钮后，这里会出现一个主方案和一个最低可交付备选方案。</div>`;
+        return;
+      }
+
+      if (!suggestion.candidateIds?.length || !suggestion.primaryId) {
+        box.innerHTML = `<div class="muted-box">${NO_MATCH_MESSAGE}</div>`;
+        return;
+      }
+
+      const primary = comboById(suggestion.primaryId);
+      const fallback = comboById(suggestion.fallbackId);
+
+      if (!primary) {
+        box.innerHTML = `<div class="muted-box">${NO_MATCH_MESSAGE}</div>`;
+        return;
+      }
+
+      const fallbackHtml = fallback
+        ? renderComboResult(fallback, "最低可交付备选", "minimum", "如果主方案让你想逃跑，就只做这张。它同样满足今天的器械、精力和避开部位硬约束。")
+        : `<div class="muted-box">当前条件下没有另一张合法的 5 分钟最低可交付备选。主方案仍然满足所有硬约束。</div>`;
+
+      box.innerHTML = `
+        ${renderComboResult(primary, "主方案", "main", makeReason(primary, suggestion))}
+        ${fallbackHtml}
+      `;
+    }
+
+
+    function pauseAllDemoVideos() {
+      document.querySelectorAll("#recommendation video").forEach(video => {
+        try { video.pause(); } catch (error) { /* ignore */ }
+      });
+    }
+
+    function showMediaFallback(mediaEl) {
+      const mediaBox = mediaEl.closest(".demo-media");
+      if (!mediaBox) return;
+      const fallback = mediaBox.querySelector(".media-fallback");
+      if (fallback) fallback.hidden = false;
+      mediaEl.style.display = "none";
+    }
+
+    function prepareDemoMedia(panel) {
+      const img = panel.querySelector("img[data-src]");
+      if (img && !img.getAttribute("src")) {
+        img.addEventListener("error", () => showMediaFallback(img), { once: true });
+        img.setAttribute("src", img.dataset.src);
+      }
+
+      const video = panel.querySelector("video");
+      const source = panel.querySelector("source[data-src]");
+      if (video && source && !source.getAttribute("src")) {
+        const handleError = () => showMediaFallback(video);
+        video.addEventListener("error", handleError, { once: true });
+        source.addEventListener("error", handleError, { once: true });
+        source.setAttribute("src", source.dataset.src);
+        video.load();
+      }
+    }
+
+    function closeAllActionDetails() {
+      pauseAllDemoVideos();
+      document.querySelectorAll("[data-action-detail-toggle]").forEach(button => {
+        button.setAttribute("aria-expanded", "false");
+      });
+      document.querySelectorAll(".action-detail-panel").forEach(panel => {
+        panel.hidden = true;
+      });
+    }
+
+    function handleActionDetailToggle(event) {
+      const button = event.target.closest("[data-action-detail-toggle]");
+      if (!button) return;
+
+      const panelId = button.getAttribute("aria-controls");
+      const panel = document.getElementById(panelId);
+      if (!panel) return;
+
+      const shouldOpen = panel.hidden;
+      closeAllActionDetails();
+
+      if (shouldOpen) {
+        panel.hidden = false;
+        button.setAttribute("aria-expanded", "true");
+        prepareDemoMedia(panel);
+      }
+    }
+
+    function renderRecordBox() {
+      const suggestion = state.todaySuggestion;
+      const today = todayISO();
+
+      if (!suggestion || suggestion.date !== today) {
+        document.querySelector("#recordBox").innerHTML = `<div class="muted-box">先生成今日推荐，再记录训练状态、实际时长、趣味度和一句反馈。</div>`;
+        return;
+      }
+
+      if (!suggestion.primaryId || !suggestion.candidateIds?.length) {
+        document.querySelector("#recordBox").innerHTML = `<div class="muted-box">当前没有可记录的合法力量任务卡。可以更换器械或放宽一个条件后重新推荐。</div>`;
+        return;
+      }
+
+      const primary = comboById(suggestion.primaryId);
+      const fallback = comboById(suggestion.fallbackId);
+      const existing = getLogByDate(today);
+      const existingCombo = existing?.comboId ? comboById(existing.comboId) : null;
+      const status = existing?.status || STATUS.STRENGTH_DONE;
+
+      const options = [primary, fallback, existingCombo]
+        .filter(Boolean)
+        .filter((combo, index, arr) => arr.findIndex(item => item.id === combo.id) === index)
+        .map(combo => `<option value="${escapeHTML(combo.id)}" ${existing?.comboId === combo.id ? "selected" : ""}>${escapeHTML(combo.name)}</option>`)
+        .join("");
+
+      const durationDefault = existing?.duration ?? primary?.idealMinutes ?? 5;
+      const funDefault = existing?.fun || 3;
+
+      document.querySelector("#recordBox").innerHTML = `
+        <form id="logForm">
+          <label>
+            今天训练状态
+            <select id="logStatus">
+              ${Object.entries(STATUS_LABELS).map(([value, label]) => `
+                <option value="${escapeHTML(value)}" ${status === value ? "selected" : ""}>${escapeHTML(label)}</option>
+              `).join("")}
+            </select>
+          </label>
+          <div style="height:10px;"></div>
+          <label id="logComboWrap">
+            相关力量任务卡
+            <select id="logCombo">${options}</select>
+          </label>
+          <div class="form-grid" style="grid-template-columns:1fr 1fr;margin:10px 0;">
+            <label>实际时长 / 分钟<input id="logDuration" type="number" min="0" max="180" value="${escapeHTML(durationDefault)}" /></label>
+            <label>趣味度 1-5<input id="logFun" type="number" min="1" max="5" value="${escapeHTML(funDefault)}" /></label>
+          </div>
+          <label class="inline-check" style="margin:8px 0;">
+            <input type="checkbox" id="logDiscomfort" ${existing?.discomfort ? "checked" : ""} />
+            本次出现疼痛或明显不适
+          </label>
+          <div id="painNotice" class="notice danger" style="display:${existing?.discomfort ? "block" : "none"};">不要继续进行引发疼痛或明显不适的动作。保存后，这张组合卡会暂停推荐 7 天。</div>
+          <label>
+            一句反馈
+            <textarea id="logFeedback" placeholder="例如：今天顺利完成 / 今天快走 / 原计划跳过。自由文本不会通过关键词参与算法。">${escapeHTML(existing?.feedback ?? "")}</textarea>
+          </label>
+          <button class="btn primary" type="submit" style="font-size:16px;width:100%;">保存今日记录</button>
+          <p class="micro" style="margin-top:10px;">快走和休息不会被计为失败；只有“原计划力量训练但跳过”会计入连续跳过。只有“力量训练已完成”会计入每周覆盖和新鲜度记录。</p>
+        </form>
+      `;
+
+      function updateLogComboAvailability() {
+        const selectedStatus = document.querySelector("#logStatus").value;
+        const comboWrap = document.querySelector("#logComboWrap");
+        const requiresCombo = selectedStatus === STATUS.STRENGTH_DONE || selectedStatus === STATUS.SKIPPED;
+        comboWrap.style.display = requiresCombo ? "grid" : "none";
+      }
+
+      document.querySelector("#logStatus").addEventListener("change", updateLogComboAvailability);
+      document.querySelector("#logDiscomfort").addEventListener("change", event => {
+        document.querySelector("#painNotice").style.display = event.target.checked ? "block" : "none";
+      });
+      updateLogComboAvailability();
+
+      document.querySelector("#logForm").addEventListener("submit", event => {
+        event.preventDefault();
+        const selectedStatus = document.querySelector("#logStatus").value;
+        const requiresCombo = selectedStatus === STATUS.STRENGTH_DONE || selectedStatus === STATUS.SKIPPED;
+        const selectedComboId = requiresCombo ? document.querySelector("#logCombo").value : null;
+
+        if (requiresCombo && !selectedComboId) {
+          alert("请先选择相关力量任务卡。");
+          return;
+        }
+
+        const discomfort = document.querySelector("#logDiscomfort").checked;
+        const log = {
+          date: today,
+          comboId: selectedComboId,
+          status: selectedStatus,
+          completed: selectedStatus === STATUS.STRENGTH_DONE,
+          duration: Number(document.querySelector("#logDuration").value || 0),
+          fun: Number(document.querySelector("#logFun").value || 0),
+          feedback: document.querySelector("#logFeedback").value.trim(),
+          discomfort,
+          pauseUntil: discomfort && selectedComboId ? addDaysISO(7) : null,
+          savedAt: new Date().toISOString()
+        };
+
+        state.logs = state.logs.filter(item => item.date !== today);
+        state.logs.push(log);
+        state.logs.sort(sortLogsDesc);
+        saveState();
+        renderCoverage();
+        renderRecentLogs();
+        renderRecordBox();
+      });
+    }
+
+    function renderCoverage() {
+      const covered = weeklyCoveredPatterns();
+      const groups = [
+        { label: "蹲", done: covered.has("蹲") },
+        { label: "髋铰链", done: covered.has("髋铰链") },
+        { label: "推", done: covered.has("推") },
+        { label: "拉", done: covered.has("拉") },
+        { label: "核心", done: covered.has("核心") },
+        { label: "搬运 / 移动", done: covered.has("搬运") || covered.has("移动") }
+      ];
+
+      document.querySelector("#coverage").innerHTML = groups.map(group => `
+        <div class="coverage-card ${group.done ? "done" : ""}">
+          <div class="mark">${group.done ? "✓" : "·"}</div>
+          <strong>${escapeHTML(group.label)}</strong>
+          <span class="micro">${group.done ? "这周练到过" : "还没覆盖"}</span>
+        </div>
+      `).join("");
+
+      const doneCount = groups.filter(group => group.done).length;
+      const completedCount = completedLogsLast7().length;
+      let note = `过去 7 天已完成 ${completedCount} 次力量训练，覆盖 ${doneCount}/6 类动作模式。`;
+      if (completedCount === 0) {
+        note += " 先不用追求完整覆盖，先完成一张合法最低可交付卡。";
+      } else if (doneCount <= 2 && completedCount >= 2) {
+        note += " 覆盖比较集中，可以换一张不同模式的组合卡。";
+      } else {
+        note += " 覆盖还不错，继续保持低摩擦。";
+      }
+      document.querySelector("#coverageNote").textContent = note;
+    }
+
+    function renderRecentLogs() {
+      const dates = recentCalendarDates(7);
+      document.querySelector("#recentLogs").innerHTML = dates.map(date => {
+        const log = getLogByDate(date);
+        if (!log) {
+          return `
+            <div class="log-row">
+              <div class="card-top">
+                <strong>${escapeHTML(date)}</strong>
+                <span class="tag">未记录</span>
+              </div>
+              <p class="micro">未记录不等于失败。下一张合法小卡也算重启。</p>
+            </div>
+          `;
+        }
+
+        const combo = log.comboId ? comboById(log.comboId) : null;
+        const statusLabel = STATUS_LABELS[log.status] || (log.completed ? "力量训练已完成" : "原计划力量训练但跳过");
+        const isDone = strengthCompleted(log);
+        const isSkip = log.status === STATUS.SKIPPED;
+        return `
+          <div class="log-row">
+            <div class="card-top">
+              <strong>${escapeHTML(date)}</strong>
+              <span class="tag ${isDone ? "good" : isSkip ? "warn" : ""}">${escapeHTML(statusLabel)}</span>
+            </div>
+            ${combo ? `<p><strong>${escapeHTML(combo.name)}</strong></p>` : `<p class="micro">没有关联力量任务卡。</p>`}
+            <div class="tag-row">
+              <span class="tag">实际 ${escapeHTML(log.duration || 0)} 分钟</span>
+              <span class="tag">趣味 ${escapeHTML(log.fun || "-")}/5</span>
+              ${log.discomfort ? `<span class="tag warn">疼痛/明显不适，暂停至 ${escapeHTML(log.pauseUntil || "-")}</span>` : ""}
+            </div>
+            ${log.feedback ? `<p class="micro">“${escapeHTML(log.feedback)}”</p>` : ""}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderActionChecklist(selectedIds = []) {
+      const selected = new Set(selectedIds);
+      document.querySelector("#comboActionChecks").innerHTML = state.actions.map(action => `
+        <label>
+          <input type="checkbox" name="comboAction" value="${escapeHTML(action.id)}" ${selected.has(action.id) ? "checked" : ""} />
+          ${escapeHTML(action.name)} <span class="micro">｜${escapeHTML(action.pattern)}｜${escapeHTML(action.equipment)}</span>
+        </label>
+      `).join("");
+    }
+
+    function renderActionList() {
+      document.querySelector("#actionList").innerHTML = state.actions.map(action => {
+        const normalized = normalizeActionFields(action);
+        const advanced = isAdvancedAction(normalized);
+        const demoLabel = normalized.demoSrc
+          ? (normalized.demoType === "video" ? "视频演示" : normalized.demoType === "image" ? "图片/GIF 演示" : "媒体待确认")
+          : "暂未配置演示";
+
+        return `
+          <article class="exercise-card">
+            <div class="card-top">
+              <div>
+                <h3>${escapeHTML(normalized.name)}</h3>
+                <div class="tag-row">
+                  <span class="tag">${escapeHTML(normalized.pattern)}</span>
+                  <span class="tag">部位：${escapeHTML((normalized.parts || []).join(" / "))}</span>
+                  <span class="tag">器械：${escapeHTML(normalized.equipment)}</span>
+                  <span class="tag">难度 ${escapeHTML(normalized.difficulty)}/5</span>
+                  <span class="tag">趣味 ${escapeHTML(normalized.fun)}/5</span>
+                  <span class="tag">噪音 ${escapeHTML(normalized.noise)}</span>
+                  <span class="tag">空间 ${escapeHTML(normalized.space)}</span>
+                  ${advanced ? `<span class="tag warn">⚠️ 进阶</span>` : ""}
+                  <span class="tag">${escapeHTML(demoLabel)}</span>
+                </div>
+              </div>
+            </div>
+            <p><strong>建议：</strong>${escapeHTML(normalized.prescription)}</p>
+            <p><strong>步骤：</strong>${escapeHTML(textToLines(normalized.steps).slice(0, 2).join("；") || "暂无")}</p>
+            <p><strong>发力：</strong>${escapeHTML(normalized.feel)}</p>
+            <p><strong>降级：</strong>${escapeHTML(normalized.regress)}</p>
+            <p><strong>进阶：</strong>${escapeHTML(normalized.progress)}</p>
+            <p><strong>停止：</strong>${escapeHTML(normalized.stopIf)}</p>
+            <p class="micro">${escapeHTML(normalized.notes)}</p>
+            <div class="item-actions">
+              <button class="btn small ghost" data-edit-action="${escapeHTML(normalized.id)}" type="button">编辑</button>
+              <button class="btn small danger" data-delete-action="${escapeHTML(normalized.id)}" type="button">删除</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderComboList() {
+      document.querySelector("#comboList").innerHTML = state.combos.map(combo => `
+        <article class="combo-card">
+          <div class="card-top">
+            <div>
+              <h3>${escapeHTML(combo.name)}</h3>
+              <p class="micro">${escapeHTML(combo.scenario)}</p>
+            </div>
+            <div class="tag-row" style="justify-content:flex-end;margin:0;">
+              <span class="tag">约 ${escapeHTML(combo.idealMinutes)} 分钟</span>
+              <span class="tag">难度 ${escapeHTML(combo.difficulty)}/5</span>
+              <span class="tag">趣味 ${escapeHTML(combo.fun)}/5</span>
+              ${combo.isMinimum ? `<span class="tag good">最低卡</span>` : ""}
+            </div>
+          </div>
+          <div class="tag-row">
+            <span class="tag">动作：${escapeHTML(actionNames(combo).join(" / ") || "未设置")}</span>
+            <span class="tag">模式：${escapeHTML(comboPatterns(combo).join(" / ") || "未设置")}</span>
+            <span class="tag">器械：${escapeHTML(comboEquipment(combo).join(" / ") || "无")}</span>
+          </div>
+          <p><strong>方式：</strong>${escapeHTML(combo.scheme)}</p>
+          <p><strong>重点：</strong>${escapeHTML(combo.focus)}</p>
+          <p><strong>完成标准：</strong>${escapeHTML(combo.completion)}</p>
+          <div class="item-actions">
+            <button class="btn small ghost" data-edit-combo="${escapeHTML(combo.id)}" type="button">编辑</button>
+            <button class="btn small danger" data-delete-combo="${escapeHTML(combo.id)}" type="button">删除</button>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderMigrationNotice() {
+      const box = document.querySelector("#migrationNotice");
+      if (!box) return;
+      box.innerHTML = state.migrationNotice
+        ? `<div class="notice good" style="margin-bottom:12px;">${escapeHTML(state.migrationNotice)}</div>`
+        : "";
+    }
+
+    function resetActionForm() {
+      document.querySelector("#actionForm").reset();
+      document.querySelector("#actionId").value = "";
+      document.querySelector("#actionDifficulty").value = 2;
+      document.querySelector("#actionFun").value = 3;
+      document.querySelector("#actionNoise").value = "低";
+      document.querySelector("#actionSpace").value = "小";
+      document.querySelector("#actionDemoType").value = "";
+      document.querySelector("#actionAdvanced").checked = false;
+    }
+
+    function resetComboForm() {
+      document.querySelector("#comboForm").reset();
+      document.querySelector("#comboId").value = "";
+      document.querySelector("#comboMinutes").value = 12;
+      document.querySelector("#comboDifficulty").value = 2;
+      document.querySelector("#comboFun").value = 3;
+      renderActionChecklist([]);
+    }
+
+    function editAction(id) {
+      const action = normalizeActionFields(byId(id));
+      if (!action?.id) return;
+      document.querySelector("#actionId").value = action.id;
+      document.querySelector("#actionName").value = action.name || "";
+      document.querySelector("#actionPattern").value = action.pattern || "蹲";
+      document.querySelector("#actionParts").value = (action.parts || []).join(", ");
+      document.querySelector("#actionEquipment").value = action.equipment || "无";
+      document.querySelector("#actionDifficulty").value = action.difficulty || 2;
+      document.querySelector("#actionFun").value = action.fun || 3;
+      document.querySelector("#actionNoise").value = action.noise || "低";
+      document.querySelector("#actionSpace").value = action.space || "小";
+      document.querySelector("#actionPrescription").value = action.prescription || "";
+      document.querySelector("#actionRegress").value = action.regress || "";
+      document.querySelector("#actionProgress").value = action.progress || "";
+      document.querySelector("#actionNotes").value = action.notes || "";
+      document.querySelector("#actionSteps").value = linesToText(action.steps);
+      document.querySelector("#actionFeel").value = action.feel || "";
+      document.querySelector("#actionMistakes").value = linesToText(action.mistakes);
+      document.querySelector("#actionStopIf").value = action.stopIf || "";
+      document.querySelector("#actionAdvanced").checked = isAdvancedAction(action);
+      document.querySelector("#actionDemoType").value = normalizeDemoType(action.demoType);
+      document.querySelector("#actionDemoSrc").value = action.demoSrc || "";
+      document.querySelector("#actionDemoPoster").value = action.demoPoster || "";
+      document.querySelector("#actionDemoCredit").value = action.demoCredit || "";
+      document.querySelector("#actionForm").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function editCombo(id) {
+      const combo = comboById(id);
+      if (!combo) return;
+      document.querySelector("#comboId").value = combo.id;
+      document.querySelector("#comboName").value = combo.name;
+      document.querySelector("#comboMinutes").value = combo.idealMinutes;
+      document.querySelector("#comboDifficulty").value = combo.difficulty;
+      document.querySelector("#comboFun").value = combo.fun;
+      document.querySelector("#comboScenario").value = combo.scenario;
+      document.querySelector("#comboScheme").value = combo.scheme;
+      document.querySelector("#comboFocus").value = combo.focus;
+      document.querySelector("#comboCompletion").value = combo.completion;
+      renderActionChecklist(combo.actionIds || []);
+      document.querySelector("#comboForm").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    document.querySelector("#pickBtn").addEventListener("click", recommendToday);
+    document.querySelector("#nextBtn").addEventListener("click", nextRecommendation);
+    document.querySelector("#recommendation").addEventListener("click", handleActionDetailToggle);
+
+    document.querySelector("#actionForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const id = document.querySelector("#actionId").value || makeId("a");
+      const next = normalizeActionFields({
+        id,
+        name: document.querySelector("#actionName").value.trim(),
+        pattern: document.querySelector("#actionPattern").value,
+        parts: document.querySelector("#actionParts").value.split(/[,，]/).map(x => x.trim()).filter(Boolean),
+        equipment: document.querySelector("#actionEquipment").value,
+        difficulty: Number(document.querySelector("#actionDifficulty").value),
+        fun: Number(document.querySelector("#actionFun").value),
+        noise: document.querySelector("#actionNoise").value,
+        space: document.querySelector("#actionSpace").value,
+        prescription: document.querySelector("#actionPrescription").value.trim(),
+        regress: document.querySelector("#actionRegress").value.trim(),
+        progress: document.querySelector("#actionProgress").value.trim(),
+        notes: document.querySelector("#actionNotes").value.trim(),
+        steps: textToLines(document.querySelector("#actionSteps").value),
+        feel: document.querySelector("#actionFeel").value.trim(),
+        mistakes: textToLines(document.querySelector("#actionMistakes").value),
+        stopIf: document.querySelector("#actionStopIf").value.trim(),
+        advanced: document.querySelector("#actionAdvanced").checked,
+        demoType: document.querySelector("#actionDemoType").value,
+        demoSrc: document.querySelector("#actionDemoSrc").value.trim(),
+        demoPoster: document.querySelector("#actionDemoPoster").value.trim(),
+        demoCredit: document.querySelector("#actionDemoCredit").value.trim()
+      });
+
+      const index = state.actions.findIndex(action => action.id === id);
+      if (index >= 0) state.actions[index] = next;
+      else state.actions.unshift(next);
+
+      saveState();
+      resetActionForm();
+      renderAll();
+    });
+
+    document.querySelector("#comboForm").addEventListener("submit", event => {
+      event.preventDefault();
+
+      const actionIds = [...document.querySelectorAll("input[name='comboAction']:checked")].map(input => input.value);
+      if (!actionIds.length) {
+        alert("请至少选择一个动作。");
+        return;
+      }
+
+      const id = document.querySelector("#comboId").value || makeId("c");
+      const next = {
+        id,
+        name: document.querySelector("#comboName").value.trim(),
+        scenario: document.querySelector("#comboScenario").value.trim(),
+        actionIds,
+        scheme: document.querySelector("#comboScheme").value.trim(),
+        focus: document.querySelector("#comboFocus").value.trim(),
+        difficulty: Number(document.querySelector("#comboDifficulty").value),
+        fun: Number(document.querySelector("#comboFun").value),
+        idealMinutes: Number(document.querySelector("#comboMinutes").value),
+        isMinimum: Number(document.querySelector("#comboMinutes").value) >= 3 && Number(document.querySelector("#comboMinutes").value) <= 7,
+        completion: document.querySelector("#comboCompletion").value.trim()
+      };
+
+      const index = state.combos.findIndex(combo => combo.id === id);
+      if (index >= 0) state.combos[index] = next;
+      else state.combos.unshift(next);
+
+      saveState();
+      resetComboForm();
+      renderAll();
+    });
+
+    document.querySelector("#resetActionForm").addEventListener("click", resetActionForm);
+    document.querySelector("#resetComboForm").addEventListener("click", resetComboForm);
+
+    document.querySelector("#actionList").addEventListener("click", event => {
+      const editId = event.target.dataset.editAction;
+      const deleteId = event.target.dataset.deleteAction;
+
+      if (editId) editAction(editId);
+
+      if (deleteId) {
+        const action = byId(deleteId);
+        if (!action) return;
+        if (!confirm(`删除动作卡“${action.name}”？相关组合卡里的这个动作也会被移除。`)) return;
+        state.actions = state.actions.filter(item => item.id !== deleteId);
+        state.combos = state.combos.map(combo => ({
+          ...combo,
+          actionIds: (combo.actionIds || []).filter(id => id !== deleteId)
+        }));
+        saveState();
+        renderAll();
+      }
+    });
+
+    document.querySelector("#comboList").addEventListener("click", event => {
+      const editId = event.target.dataset.editCombo;
+      const deleteId = event.target.dataset.deleteCombo;
+
+      if (editId) editCombo(editId);
+
+      if (deleteId) {
+        const combo = comboById(deleteId);
+        if (!combo) return;
+        if (!confirm(`删除组合卡“${combo.name}”？训练记录仍会保留，但可能显示为已删除组合卡。`)) return;
+        state.combos = state.combos.filter(item => item.id !== deleteId);
+        saveState();
+        renderAll();
+      }
+    });
+
+    document.querySelector("#exportData").addEventListener("click", () => {
+      document.querySelector("#dataDump").value = JSON.stringify(stripRuntimeFields(state), null, 2);
+    });
+
+    document.querySelector("#resetAll").addEventListener("click", () => {
+      if (!confirm("这会清空你新增/编辑的卡片和训练记录，并恢复默认数据。确定吗？")) return;
+      state = defaultState();
+      saveState();
+      document.querySelector("#dataDump").value = "";
+      renderAll();
+    });
+
+    function renderAll() {
+      if (state.todaySuggestion?.date === todayISO() && state.todaySuggestion?.prefs) {
+        setPrefs(state.todaySuggestion.prefs);
+      }
+      renderActionChecklist([]);
+      renderActionList();
+      renderComboList();
+      renderCoverage();
+      renderRecentLogs();
+      renderRecordBox();
+      renderRecommendation();
+      renderMigrationNotice();
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
