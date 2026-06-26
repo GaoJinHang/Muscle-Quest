@@ -795,7 +795,7 @@
 
   <script>
     const STORAGE_KEY = "muscleQuest.v1";
-    const DATA_VERSION = 3;
+    const DATA_VERSION = 5;
     const NO_MATCH_MESSAGE = "当前条件下没有完全匹配的任务卡，请更换器械或放宽一个条件。";
 
     const STATUS = {
@@ -818,6 +818,52 @@
       20: { min: 16, max: 24 },
       30: { min: 25, max: 35 }
     };
+
+    const SCORE_WEIGHTS = Object.freeze({
+      base: 100,
+      fun: 4,
+      timeDistancePenalty: 1.5,
+      difficultyPenalty: 2,
+      avoidRatioPenalty: 18,
+      shorterBasePenalty: 8,
+      shorterMinutePenalty: 1.2,
+      minimumMainPenalty: 35,
+      uncoveredPatternBonus: 2,
+      selectedEquipmentBonus: 3,
+      historyFunMultiplier: 2,
+      startingEasyBonus: 5,
+      startingMinimumBonus: 2,
+      startingAdvancedPenalty: 4,
+      restartEasyBonus: 9,
+      restartShorterMinuteBonus: 0.7,
+      restartMinimumBonus: 18,
+      restartAdvancedPenalty: 12,
+      activeFunBonus: 1.2,
+      activeChallengeBonus: 7
+    });
+
+    const ADHERENCE_COPY = Object.freeze({
+      starting: {
+        label: "起步模式",
+        message: "起步模式：先积累几次记录，今天完成一轮就很好。",
+        reason: "当前处于起步模式，排序会轻微偏向低压力、容易完成的卡。"
+      },
+      restart: {
+        label: "重启模式",
+        message: "重启模式：今天优先简单、短、容易完成。",
+        reason: "当前处于重启模式，排序会偏向更短、更简单、最低可交付或低压力的卡。"
+      },
+      steady: {
+        label: "稳定模式",
+        message: "稳定模式：继续保持变化和全身动作覆盖。",
+        reason: "当前处于稳定模式，排序主要依据趣味度、新鲜度和每周覆盖。"
+      },
+      active: {
+        label: "活跃模式",
+        message: "活跃模式：高精力时会适度提高趣味和挑战卡优先级。",
+        reason: "当前处于活跃模式，排序会适度提高高趣味卡；高精力时才会提高合法挑战卡。"
+      }
+    });
 
     const DEFAULT_ACTIONS = [
       {
@@ -1344,6 +1390,75 @@
         regress: "原地熊式支撑",
         progress: "前后左右移动",
         notes: "膝盖离地一点点，背保持平；仅放在高精力卡里。"
+      },
+
+      {
+        id: "a_crab_walk",
+        name: "蟹行",
+        pattern: "移动",
+        parts: ["肩", "核心", "臀"],
+        equipment: "无",
+        difficulty: 4,
+        fun: 5,
+        noise: "中",
+        space: "中",
+        prescription: "20-30 秒，或向左/向右各 4-6 步",
+        regress: "反向桌式保持 15-25 秒，或只做很小范围的左右移动",
+        progress: "延长到 30-40 秒，或加入前后方向的小步移动",
+        notes: "先把手腕、肩和髋部位置摆稳，移动范围宁小勿乱；这是进阶动作，只放在高精力挑战中。",
+        steps: [
+          "坐在地面，双手撑在身体后方，手指朝向舒服的方向。",
+          "脚掌踩地，收紧核心并把髋部抬离地面，进入反向桌式支撑。",
+          "保持胸口打开，手脚小步移动，先左右再前后，动作保持安静可控。",
+          "全程保持呼吸，感觉肩或手腕压力上升时立刻缩小范围或停止。"
+        ],
+        feel: "主要感觉肩部支撑、核心稳定和臀部持续发力。",
+        mistakes: [
+          "髋部塌得太低，导致腰或肩顶住。",
+          "手腕角度不舒服还继续硬撑。",
+          "步子太大、移动太快，肩胛和骨盆失控。",
+          "耸肩、憋气或把重量全部压到手腕上。"
+        ],
+        stopIf: "肩、腕、腰出现疼痛，或髋部无法保持抬起和稳定时停止，改用反向桌式保持或今天跳过。",
+        advanced: true,
+        demoType: "",
+        demoSrc: "",
+        demoPoster: "",
+        demoCredit: ""
+      },
+      {
+        id: "a_plank_shoulder_tap",
+        name: "平板触肩",
+        pattern: "核心",
+        parts: ["核心", "肩"],
+        equipment: "无",
+        difficulty: 4,
+        fun: 4,
+        noise: "低",
+        space: "小",
+        prescription: "每侧 6-10 次，或 20-30 秒",
+        regress: "跪姿触肩、双手抬高撑在桌沿，或改成普通平板支撑",
+        progress: "脚站得更窄，或每次触肩后停 1 秒再换边",
+        notes: "这是进阶核心动作，目标不是摸得快，而是尽量让骨盆不晃、腰不塌。",
+        steps: [
+          "双手撑地进入高平板，手在肩下方，双脚分开到能稳定的位置。",
+          "轻收腹和夹臀，让身体从头到脚保持一条线。",
+          "慢慢抬起一只手触碰对侧肩膀，尽量减少骨盆旋转。",
+          "把手稳稳放回地面后再换边，始终保持顺畅呼吸。"
+        ],
+        feel: "主要感觉核心在抵抗旋转，肩部稳定支撑，臀部轻微参与保持身体成一条线。",
+        mistakes: [
+          "腰塌下去或肋骨明显外翻。",
+          "骨盆左右大幅旋转。",
+          "为了完成次数而快速拍肩。",
+          "手腕或肩不舒服仍继续硬撑。"
+        ],
+        stopIf: "腰塌无法纠正、骨盆明显旋转失控，或肩、腕出现疼痛时停止，改跪姿触肩、抬高手部支撑或普通平板。",
+        advanced: true,
+        demoType: "",
+        demoSrc: "",
+        demoPoster: "",
+        demoCredit: ""
       }
     ];
 
@@ -2100,7 +2215,7 @@
         id: "c_legs_glutes_core",
         name: "20 分钟腿臀核心卡",
         scenario: "想要一种安静但有感觉的早晨训练。",
-        actionIds: ["a_reverse_lunge", "a_glute_bridge", "a_side_plank", "a_step_up"],
+        actionIds: ["a_reverse_lunge", "a_glute_bridge", "a_side_plank", "a_bodyweight_good_morning"],
         scheme: "每个动作 8 次或 30 秒，循环 2 轮。",
         focus: "腿、臀、核心稳定。",
         difficulty: 3,
@@ -2147,6 +2262,59 @@
         idealMinutes: 30,
         isMinimum: false,
         completion: "做满 2 轮即可；肩或腕不适时停止相关动作。"
+      },
+
+      {
+        id: "c_20_gentle_full_body",
+        name: "20 分钟温和全身卡",
+        scenario: "低精力但仍有时间的早晨，想慢慢把全身叫醒，不追求训练感爆炸。",
+        actionIds: ["a_scapular_wall_slide", "a_body_squat", "a_glute_bridge", "a_wall_pushup", "a_prone_w_raise", "a_dead_bug"],
+        scheme: "慢速低压力编排：每个动作 8-10 次或 30 秒，动作间休息 30-45 秒，循环 2-3 轮。",
+        focus: "上背唤醒、基础蹲、臀桥、轻推和核心控制。",
+        difficulty: 2,
+        fun: 3,
+        idealMinutes: 20,
+        isMinimum: false,
+        completion: "完成 2 轮即可；第三轮完全可选，只在状态变好时加做。"
+      },
+      {
+        id: "c_20_upper_core_no_legs",
+        name: "20 分钟不练腿上肢核心卡",
+        scenario: "今天不想重点练腿臀，但仍想做一张上肢和核心的完整任务卡。",
+        actionIds: ["a_scapular_wall_slide", "a_prone_w_raise", "a_reverse_snow_angel", "a_wall_pushup", "a_knee_pushup", "a_dead_bug"],
+        scheme: "上背动作 8-12 次，推和核心动作 6-10 次或 30 秒；循环 2-3 轮，肩腕保持舒适优先。",
+        focus: "上背、肩胛控制、推和核心，不包含腿臀主要训练动作。",
+        difficulty: 3,
+        fun: 3,
+        idealMinutes: 20,
+        isMinimum: false,
+        completion: "做完 2 轮算合格；肩或腕出现不适时停止推类动作，保留上背和死虫即可。"
+      },
+      {
+        id: "c_20_animal_flow_challenge",
+        name: "20 分钟动物移动挑战卡",
+        scenario: "高精力挑战卡：想把训练做得更像小游戏，并且今天肩、腕和核心状态都不错。",
+        actionIds: ["a_bear_crawl", "a_crab_walk", "a_plank_shoulder_tap", "a_reverse_lunge", "a_bird_dog"],
+        scheme: "计时形式：每个动作 25-35 秒，休息 25-35 秒，循环 3 轮；所有动作都允许使用各自降级版本。",
+        focus: "动物移动、核心抗旋转、单腿控制和全身协调。",
+        difficulty: 4,
+        fun: 5,
+        idealMinutes: 20,
+        isMinimum: false,
+        completion: "完成 2 轮算挑战成功；低精力或普通精力时不作为合法候选。"
+      },
+      {
+        id: "c_30_lower_core_endurance",
+        name: "30 分钟下肢核心耐力卡",
+        scenario: "今天有完整时间，想重点练腿臀、髋铰链和核心控制，但不安排主要手臂训练。",
+        actionIds: ["a_body_squat", "a_bodyweight_good_morning", "a_reverse_lunge", "a_glute_bridge", "a_calf_raise", "a_dead_bug", "a_bird_dog"],
+        scheme: "每个动作 8-12 次或 30 秒，循环 2-3 轮；每轮后休息 60 秒，节奏稳定不抢速度。",
+        focus: "腿臀、髋铰链、小腿耐力和核心控制，与徒手全身卡相比减少主要手臂训练。",
+        difficulty: 3,
+        fun: 3,
+        idealMinutes: 30,
+        isMinimum: false,
+        completion: "完成 2 轮算合格，完成 3 轮算完整。"
       }
     ];
 
@@ -2206,6 +2374,20 @@
       return [...mergedDefaults, ...custom];
     }
 
+    function normalizePrefsSnapshot(prefs) {
+      if (!prefs || typeof prefs !== "object") return null;
+      const minutes = Number(prefs.minutes || 12);
+      const energy = ["低", "普通", "高"].includes(prefs.energy) ? prefs.energy : "普通";
+      const equipment = String(prefs.equipment || "无");
+      const avoidPart = String(prefs.avoidPart || "无");
+      return {
+        minutes: [5, 12, 20, 30].includes(minutes) ? minutes : 12,
+        energy,
+        equipment,
+        avoidPart
+      };
+    }
+
     function normalizeStatus(log) {
       if (Object.values(STATUS).includes(log?.status)) return log.status;
       if (log?.completed === true) return STATUS.STRENGTH_DONE;
@@ -2230,7 +2412,8 @@
             feedback: String(log.feedback || ""),
             discomfort,
             pauseUntil: discomfort && log.comboId ? (log.pauseUntil || addDaysISO(7, log.date)) : (log.pauseUntil || null),
-            savedAt: log.savedAt || `${log.date}T12:00:00.000`
+            savedAt: log.savedAt || `${log.date}T12:00:00.000`,
+            prefsSnapshot: normalizePrefsSnapshot(log.prefsSnapshot)
           };
         })
         .sort(sortLogsDesc);
@@ -2247,7 +2430,7 @@
         fallbackId: todaySuggestion.fallbackId || null,
         candidateIds,
         currentIndex: Number.isInteger(todaySuggestion.currentIndex) ? todaySuggestion.currentIndex : 0,
-        prefs: todaySuggestion.prefs || null,
+        prefs: normalizePrefsSnapshot(todaySuggestion.prefs),
         generatedAt: todaySuggestion.generatedAt || new Date().toISOString()
       };
     }
@@ -2363,6 +2546,10 @@
         .map(id => byId(id))
         .filter(Boolean);
     }
+    function comboHasAdvancedAction(combo) {
+      return comboActions(combo).some(action => isAdvancedAction(action));
+    }
+
 
     function comboPatterns(combo) {
       return [...new Set(comboActions(combo).map(action => action.pattern))];
@@ -2405,12 +2592,35 @@
 
     function partMatchesAvoid(parts, avoid) {
       if (!avoid || avoid === "无") return false;
-      const normalized = (parts || []).join(",");
+      const normalized = Array.isArray(parts)
+        ? parts.map(part => String(part || "").trim()).filter(Boolean).join(",")
+        : "";
+      if (!normalized) return false;
       if (avoid === "腿") return /腿|臀|小腿|脚踝/.test(normalized);
       if (avoid === "手臂") return /手臂|肱|前臂|握力/.test(normalized);
       if (avoid === "肩") return /肩/.test(normalized);
       if (avoid === "核心") return /核心|腹|腰/.test(normalized);
       return normalized.includes(avoid);
+    }
+
+    function actionMatchesAvoid(action, avoid) {
+      if (!action || !avoid || avoid === "无") return false;
+      return partMatchesAvoid(action.parts || [], avoid);
+    }
+
+    function comboAvoidStats(combo, avoid) {
+      const actions = comboActions(combo);
+      const total = actions.length;
+      if (!avoid || avoid === "无" || !total) {
+        return { matchCount: 0, total, ratio: 0 };
+      }
+
+      const matchCount = actions.filter(action => actionMatchesAvoid(action, avoid)).length;
+      return {
+        matchCount,
+        total,
+        ratio: matchCount / total
+      };
     }
 
     function isPaused(combo) {
@@ -2478,6 +2688,57 @@
         .slice(0, limit);
     }
 
+    function isStrengthDecisionLog(log) {
+      return strengthCompleted(log) || log?.status === STATUS.SKIPPED;
+    }
+
+    function recentStrengthDecisionLogs(limit = 7) {
+      return state.logs
+        .filter(isStrengthDecisionLog)
+        .slice()
+        .sort(sortLogsDesc)
+        .slice(0, limit);
+    }
+
+    function strengthDecisionSkipStreak() {
+      let count = 0;
+      for (const log of recentStrengthDecisionLogs(Infinity)) {
+        if (log.status === STATUS.SKIPPED) {
+          count += 1;
+          continue;
+        }
+        if (strengthCompleted(log)) break;
+      }
+      return count;
+    }
+
+    function getAdherenceState() {
+      const decisions = recentStrengthDecisionLogs(7);
+      const attemptCount = decisions.length;
+      const completedCount = decisions.filter(strengthCompleted).length;
+      const completionRate = attemptCount > 0 ? completedCount / attemptCount : null;
+      const skipStreak = strengthDecisionSkipStreak();
+
+      let key = "steady";
+      if (skipStreak >= 2) {
+        key = "restart";
+      } else if (attemptCount < 3) {
+        key = "starting";
+      } else if (attemptCount >= 4 && completionRate !== null && completionRate <= 0.5) {
+        key = "restart";
+      } else if (attemptCount >= 5 && completionRate !== null && completionRate >= 0.8) {
+        key = "active";
+      }
+
+      return {
+        key,
+        attemptCount,
+        completedCount,
+        completionRate,
+        skipStreak
+      };
+    }
+
     function completedLogsLast7() {
       const dates = new Set(recentCalendarDates(7));
       return state.logs.filter(log => dates.has(log.date) && strengthCompleted(log));
@@ -2494,17 +2755,7 @@
     }
 
     function explicitSkipStreak() {
-      let count = 0;
-      const sorted = state.logs.slice().sort(sortLogsDesc);
-      for (const log of sorted) {
-        if (log.status === STATUS.WALK || log.status === STATUS.REST) continue;
-        if (log.status === STATUS.SKIPPED) {
-          count += 1;
-          continue;
-        }
-        if (strengthCompleted(log)) break;
-      }
-      return count;
+      return strengthDecisionSkipStreak();
     }
 
     function historicalFunAdjustment(comboId) {
@@ -2515,7 +2766,7 @@
         .slice(0, 5);
       if (!logs.length) return 0;
       const avg = logs.reduce((sum, log) => sum + Number(log.fun || 0), 0) / logs.length;
-      return (avg - 3) * 2;
+      return (avg - 3) * SCORE_WEIGHTS.historyFunMultiplier;
     }
 
     function actionOverlapRatio(combo, otherCombo) {
@@ -2551,28 +2802,65 @@
       if (useTime && !isInTimePool(combo, prefs.minutes)) return false;
       if (!isEquipmentCompatible(combo, prefs.equipment)) return false;
       if (Number(combo.difficulty || 5) > getEnergyLimit(prefs.energy)) return false;
-      if (partMatchesAvoid(comboParts(combo), prefs.avoidPart)) return false;
+      if (comboHasAdvancedAction(combo) && prefs.energy !== "高") return false;
+      if (comboAvoidStats(combo, prefs.avoidPart).ratio > 0.5) return false;
       if (isPaused(combo)) return false;
       return true;
     }
 
-    function scoreCombo(combo, prefs) {
-      let score = 100;
+    function scoreCombo(combo, prefs, options = {}) {
+      let score = SCORE_WEIGHTS.base;
       const range = getTimeRange(prefs.minutes);
       const rangeCenter = (range.min + range.max) / 2;
+      const selectedMinutes = Number(prefs.minutes || rangeCenter);
+      const idealMinutes = Number(combo.idealMinutes || rangeCenter);
+      const difficulty = Number(combo.difficulty || 3);
+      const fun = Number(combo.fun || 3);
       const patterns = comboPatterns(combo);
       const covered = weeklyCoveredPatterns();
+      const avoidStats = comboAvoidStats(combo, prefs.avoidPart);
+      const adherence = options.adherence || getAdherenceState();
+      const hasAdvanced = comboHasAdvancedAction(combo);
 
-      score += Number(combo.fun || 3) * 4;
-      score -= Math.abs(Number(combo.idealMinutes || rangeCenter) - rangeCenter) * 1.5;
-      score -= Number(combo.difficulty || 3) * 2;
+      score += fun * SCORE_WEIGHTS.fun;
+      score -= Math.abs(idealMinutes - rangeCenter) * SCORE_WEIGHTS.timeDistancePenalty;
+      score -= difficulty * SCORE_WEIGHTS.difficultyPenalty;
+
+      if (avoidStats.ratio > 0 && avoidStats.ratio <= 0.5) {
+        score -= avoidStats.ratio * SCORE_WEIGHTS.avoidRatioPenalty;
+      }
+
+      if (options.poolType === "shorter") {
+        score -= Math.max(0, selectedMinutes - idealMinutes) * SCORE_WEIGHTS.shorterMinutePenalty + SCORE_WEIGHTS.shorterBasePenalty;
+      } else if (options.poolType === "minimumMain") {
+        score -= SCORE_WEIGHTS.minimumMainPenalty;
+      }
 
       patterns.forEach(pattern => {
-        if (!covered.has(pattern)) score += 2;
+        if (!covered.has(pattern)) score += SCORE_WEIGHTS.uncoveredPatternBonus;
       });
 
-      if (prefs.equipment !== "无" && comboEquipment(combo).includes(prefs.equipment)) score += 3;
-      if (explicitSkipStreak() >= 2 && combo.isMinimum) score += 18;
+      if (prefs.equipment !== "无" && comboEquipment(combo).includes(prefs.equipment)) {
+        score += SCORE_WEIGHTS.selectedEquipmentBonus;
+      }
+
+      if (adherence.key === "starting") {
+        if (difficulty <= 2) score += SCORE_WEIGHTS.startingEasyBonus;
+        if (combo.isMinimum || idealMinutes <= 7) score += SCORE_WEIGHTS.startingMinimumBonus;
+        if (hasAdvanced) score -= SCORE_WEIGHTS.startingAdvancedPenalty;
+      } else if (adherence.key === "restart") {
+        if (difficulty <= 2) score += SCORE_WEIGHTS.restartEasyBonus;
+        if (idealMinutes <= selectedMinutes) {
+          score += Math.max(0, selectedMinutes - idealMinutes) * SCORE_WEIGHTS.restartShorterMinuteBonus;
+        }
+        if (combo.isMinimum || idealMinutes <= 7) score += SCORE_WEIGHTS.restartMinimumBonus;
+        if (hasAdvanced) score -= SCORE_WEIGHTS.restartAdvancedPenalty;
+      } else if (adherence.key === "active") {
+        score += Math.max(0, fun - 3) * SCORE_WEIGHTS.activeFunBonus;
+        if (prefs.energy === "高" && hasAdvanced && fun >= 4) {
+          score += SCORE_WEIGHTS.activeChallengeBonus;
+        }
+      }
 
       score += historicalFunAdjustment(combo.id);
       score += freshnessPenalty(combo);
@@ -2580,17 +2868,60 @@
       return score;
     }
 
-    function rankedCandidates(prefs) {
-      return state.combos
-        .filter(combo => isLegalCandidate(combo, prefs))
-        .map(combo => ({ combo, score: scoreCombo(combo, prefs) }))
+    function rankCandidateList(combos, prefs, poolType = "exact", adherence = getAdherenceState()) {
+      return combos
+        .map(combo => ({ combo, score: scoreCombo(combo, prefs, { poolType, adherence }), poolType }))
         .sort((a, b) => {
           if (b.score !== a.score) return b.score - a.score;
           return String(a.combo.id).localeCompare(String(b.combo.id));
         });
     }
 
-    function selectMinimumFallback(prefs, primaryId) {
+    function rankedCandidates(prefs) {
+      const selectedMinutes = Number(prefs.minutes || 0);
+      const range = getTimeRange(selectedMinutes);
+      const adherence = getAdherenceState();
+
+      const exact = rankCandidateList(
+        state.combos.filter(combo => isLegalCandidate(combo, prefs)),
+        prefs,
+        "exact",
+        adherence
+      );
+
+      const finalEntries = [...exact];
+      const usedIds = new Set(finalEntries.map(item => item.combo.id));
+
+      if (exact.length < 2) {
+        const shorterNormalCombos = state.combos
+          .filter(combo => !usedIds.has(combo.id))
+          .filter(combo => combo.isMinimum !== true)
+          .filter(combo => Number(combo.idealMinutes || 0) > 0)
+          .filter(combo => Number(combo.idealMinutes || 0) <= selectedMinutes)
+          .filter(combo => Number(combo.idealMinutes || 0) < range.min)
+          .filter(combo => isLegalCandidate(combo, prefs, { useTime: false }));
+
+        const shorterNormal = rankCandidateList(shorterNormalCombos, prefs, "shorter", adherence);
+        shorterNormal.forEach(item => usedIds.add(item.combo.id));
+        finalEntries.push(...shorterNormal);
+
+        if (exact.length === 0 && shorterNormal.length === 0) {
+          const minimumCombos = state.combos
+            .filter(combo => !usedIds.has(combo.id))
+            .filter(combo => combo.isMinimum || (Number(combo.idealMinutes || 0) >= 3 && Number(combo.idealMinutes || 0) <= 7))
+            .filter(combo => Number(combo.idealMinutes || 0) <= selectedMinutes)
+            .filter(combo => isLegalCandidate(combo, prefs, { useTime: false }));
+
+          const minimumMain = rankCandidateList(minimumCombos, prefs, "minimumMain", adherence);
+          minimumMain.forEach(item => usedIds.add(item.combo.id));
+          finalEntries.push(...minimumMain);
+        }
+      }
+
+      return finalEntries;
+    }
+
+    function selectMinimumFallback(prefs, primaryId, adherence = getAdherenceState()) {
       const minimumPrefs = { ...prefs, minutes: 5 };
       const legalMinimums = state.combos
         .filter(combo => combo.isMinimum || (Number(combo.idealMinutes) >= 3 && Number(combo.idealMinutes) <= 7))
@@ -2600,7 +2931,7 @@
       if (!legalMinimums.length) return null;
 
       return legalMinimums
-        .map(combo => ({ combo, score: scoreCombo(combo, minimumPrefs) }))
+        .map(combo => ({ combo, score: scoreCombo(combo, minimumPrefs, { adherence }) }))
         .sort((a, b) => {
           if (b.score !== a.score) return b.score - a.score;
           return String(a.combo.id).localeCompare(String(b.combo.id));
@@ -2608,7 +2939,9 @@
     }
 
     function buildSuggestion(prefs, currentIndex = 0) {
-      const ranked = rankedCandidates(prefs);
+      const normalizedPrefs = normalizePrefsSnapshot(prefs) || getPrefs();
+      const adherence = getAdherenceState();
+      const ranked = rankedCandidates(normalizedPrefs);
       const candidateIds = ranked.map(item => item.combo.id);
       if (!candidateIds.length) {
         return {
@@ -2617,14 +2950,15 @@
           fallbackId: null,
           candidateIds: [],
           currentIndex: -1,
-          prefs,
+          prefs: normalizedPrefs,
+          adherenceKey: adherence.key,
           generatedAt: new Date().toISOString()
         };
       }
 
       const safeIndex = Math.max(0, Math.min(currentIndex, candidateIds.length - 1));
       const primaryId = candidateIds[safeIndex];
-      const fallback = selectMinimumFallback(prefs, primaryId);
+      const fallback = selectMinimumFallback(normalizedPrefs, primaryId, adherence);
 
       return {
         date: todayISO(),
@@ -2632,7 +2966,8 @@
         fallbackId: fallback?.id || null,
         candidateIds,
         currentIndex: safeIndex,
-        prefs,
+        prefs: normalizedPrefs,
+        adherenceKey: adherence.key,
         generatedAt: new Date().toISOString()
       };
     }
@@ -2641,16 +2976,24 @@
       if (!combo) return "";
       const prefs = suggestion?.prefs || getPrefs();
       const range = getTimeRange(prefs.minutes);
+      const inExactPool = isInTimePool(combo, prefs.minutes);
+      const adherence = getAdherenceState();
+      const adherenceCopy = ADHERENCE_COPY[adherence.key] || ADHERENCE_COPY.steady;
       const bits = [
-        `位于 ${range.min}—${range.max} 分钟时间池`,
+        inExactPool
+          ? `位于 ${range.min}—${range.max} 分钟精确时间池`
+          : "当前精力或避开条件下，采用了不超过可用时间的较短方案。",
         `难度 ${combo.difficulty}/5，不超过${prefs.energy}精力上限 ${getEnergyLimit(prefs.energy)}`,
         prefs.equipment === "无"
           ? "只包含无器械动作"
-          : `只包含无器械和${prefs.equipment}动作`
+          : `只包含无器械和${prefs.equipment}动作`,
+        adherenceCopy.reason
       ];
 
       if (prefs.avoidPart && prefs.avoidPart !== "无") {
-        bits.push(`已硬过滤“${prefs.avoidPart}”相关主要训练部位`);
+        const avoidStats = comboAvoidStats(combo, prefs.avoidPart);
+        const percent = Math.round(avoidStats.ratio * 100);
+        bits.push(`已排除以“${prefs.avoidPart}”为明显重点的卡，并降低部分涉及卡的排序；本卡涉及比例 ${percent}%`);
       }
 
       const recent = recentStrengthLogs(3);
@@ -2692,13 +3035,16 @@
       } else {
         const nextIndex = (Number(current.currentIndex || 0) + 1) % current.candidateIds.length;
         const primaryId = current.candidateIds[nextIndex];
-        const fallback = selectMinimumFallback(prefs, primaryId);
+        const adherence = getAdherenceState();
+        const normalizedPrefs = normalizePrefsSnapshot(prefs) || prefs;
+        const fallback = selectMinimumFallback(normalizedPrefs, primaryId, adherence);
         state.todaySuggestion = {
           ...current,
           primaryId,
           fallbackId: fallback?.id || null,
           currentIndex: nextIndex,
-          prefs,
+          prefs: normalizedPrefs,
+          adherenceKey: adherence.key,
           date: todayISO()
         };
       }
@@ -2867,17 +3213,53 @@
       `;
     }
 
+    function renderAdherenceNotice(adherence = getAdherenceState()) {
+      const copy = ADHERENCE_COPY[adherence.key] || ADHERENCE_COPY.steady;
+      const detail = adherence.attemptCount >= 3
+        ? `基于最近 ${adherence.attemptCount} 次力量训练决策。`
+        : `基于最近 ${adherence.attemptCount} 次力量训练决策；样本还少，先积累记录即可。`;
+      return `
+        <div class="notice" style="margin-top:0;">
+          ${escapeHTML(copy.message)}
+          <div class="micro" style="margin-top:4px;">${escapeHTML(detail)}</div>
+        </div>
+      `;
+    }
+
+    function comboUsesOnlyNoEquipment(combo) {
+      return Boolean(combo) && comboEquipment(combo).every(eq => (eq || "无") === "无");
+    }
+
+    function shouldShowEquipmentTip(adherence = getAdherenceState()) {
+      if (adherence.key !== "active") return false;
+      const recentDone = recentStrengthLogs(3);
+      if (recentDone.length < 3) return false;
+      return recentDone.every(log => comboUsesOnlyNoEquipment(comboById(log.comboId)));
+    }
+
+    function renderEquipmentTip(adherence = getAdherenceState()) {
+      if (!shouldShowEquipmentTip(adherence)) return "";
+      return `<div class="notice good">最近几次都是徒手；下次手边有背包或弹力带时，可以试试负重或拉力卡。</div>`;
+    }
+
     function renderRecommendation() {
       const suggestion = state.todaySuggestion;
       const box = document.querySelector("#recommendation");
+      const adherence = getAdherenceState();
 
       if (!suggestion || suggestion.date !== todayISO()) {
-        box.innerHTML = `<div class="muted-box">点击按钮后，这里会出现一个主方案和一个最低可交付备选方案。</div>`;
+        box.innerHTML = `
+          ${renderAdherenceNotice(adherence)}
+          <div class="muted-box">点击按钮后，这里会出现一个主方案和一个最低可交付备选方案。</div>
+        `;
         return;
       }
 
       if (!suggestion.candidateIds?.length || !suggestion.primaryId) {
-        box.innerHTML = `<div class="muted-box">${NO_MATCH_MESSAGE}</div>`;
+        box.innerHTML = `
+          ${renderAdherenceNotice(adherence)}
+          <div class="muted-box">${NO_MATCH_MESSAGE}</div>
+        `;
         return;
       }
 
@@ -2885,7 +3267,10 @@
       const fallback = comboById(suggestion.fallbackId);
 
       if (!primary) {
-        box.innerHTML = `<div class="muted-box">${NO_MATCH_MESSAGE}</div>`;
+        box.innerHTML = `
+          ${renderAdherenceNotice(adherence)}
+          <div class="muted-box">${NO_MATCH_MESSAGE}</div>
+        `;
         return;
       }
 
@@ -2894,6 +3279,8 @@
         : `<div class="muted-box">当前条件下没有另一张合法的 5 分钟最低可交付备选。主方案仍然满足所有硬约束。</div>`;
 
       box.innerHTML = `
+        ${renderAdherenceNotice(adherence)}
+        ${renderEquipmentTip(adherence)}
         ${renderComboResult(primary, "主方案", "main", makeReason(primary, suggestion))}
         ${fallbackHtml}
       `;
@@ -3018,7 +3405,7 @@
             <textarea id="logFeedback" placeholder="例如：今天顺利完成 / 今天快走 / 原计划跳过。自由文本不会通过关键词参与算法。">${escapeHTML(existing?.feedback ?? "")}</textarea>
           </label>
           <button class="btn primary" type="submit" style="font-size:16px;width:100%;">保存今日记录</button>
-          <p class="micro" style="margin-top:10px;">快走和休息不会被计为失败；只有“原计划力量训练但跳过”会计入连续跳过。只有“力量训练已完成”会计入每周覆盖和新鲜度记录。</p>
+          <p class="micro" style="margin-top:10px;">快走和休息不会进入力量完成率分母；只有“原计划力量训练但跳过”和“力量训练已完成”会作为力量训练决策。自由文本不会通过关键词参与算法。</p>
         </form>
       `;
 
@@ -3047,6 +3434,12 @@
         }
 
         const discomfort = document.querySelector("#logDiscomfort").checked;
+        const suggestionPrefs = normalizePrefsSnapshot(state.todaySuggestion?.prefs);
+        const currentPrefs = normalizePrefsSnapshot(getPrefs());
+        const snapshot = requiresCombo
+          ? (suggestionPrefs || currentPrefs)
+          : (suggestionPrefs || currentPrefs || null);
+
         const log = {
           date: today,
           comboId: selectedComboId,
@@ -3057,7 +3450,8 @@
           feedback: document.querySelector("#logFeedback").value.trim(),
           discomfort,
           pauseUntil: discomfort && selectedComboId ? addDaysISO(7) : null,
-          savedAt: new Date().toISOString()
+          savedAt: new Date().toISOString(),
+          prefsSnapshot: snapshot
         };
 
         state.logs = state.logs.filter(item => item.date !== today);
@@ -3067,6 +3461,7 @@
         renderCoverage();
         renderRecentLogs();
         renderRecordBox();
+        renderRecommendation();
       });
     }
 
@@ -3122,6 +3517,7 @@
         const statusLabel = STATUS_LABELS[log.status] || (log.completed ? "力量训练已完成" : "原计划力量训练但跳过");
         const isDone = strengthCompleted(log);
         const isSkip = log.status === STATUS.SKIPPED;
+        const snapshot = normalizePrefsSnapshot(log.prefsSnapshot);
         return `
           <div class="log-row">
             <div class="card-top">
@@ -3132,6 +3528,8 @@
             <div class="tag-row">
               <span class="tag">实际 ${escapeHTML(log.duration || 0)} 分钟</span>
               <span class="tag">趣味 ${escapeHTML(log.fun || "-")}/5</span>
+              ${snapshot?.energy ? `<span class="tag">当时精力 ${escapeHTML(snapshot.energy)}</span>` : ""}
+              ${snapshot?.equipment ? `<span class="tag">当时器械 ${escapeHTML(snapshot.equipment)}</span>` : ""}
               ${log.discomfort ? `<span class="tag warn">疼痛/明显不适，暂停至 ${escapeHTML(log.pauseUntil || "-")}</span>` : ""}
             </div>
             ${log.feedback ? `<p class="micro">“${escapeHTML(log.feedback)}”</p>` : ""}
